@@ -1,0 +1,26 @@
+# 環境変数
+.env
+.env.local
+.env.*.local
+
+# Docker
+.dockerignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.coverage
+
+# Node.js
+node_modules/
+dist/
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

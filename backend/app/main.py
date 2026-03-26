@@ -1,0 +1,34 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI(
+    title="Scrappa API",
+    version="1.0.0",
+    description="スクラップブックWebアプリのバックエンドAPI"
+)
+
+# CORS設定（Docker環境）
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",  # ホストからのアクセス
+        "http://frontend:3000",   # Docker内部からのアクセス
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def root():
+    """
+    ルートエンドポイント（ヘルスチェック用）
+    """
+    return {"message": "Scrappa API is running!", "environment": "Docker"}
+
+@app.get("/health")
+def health_check():
+    """
+    ヘルスチェックエンドポイント
+    """
+    return {"status": "healthy", "version": "1.0.0"}
