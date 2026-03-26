@@ -19,6 +19,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# ルーター登録
+app.include_router(clips.router, prefix="/clips", tags=["clips"])
+app.include_router(tags.router, prefix="/tags", tags=["tags"])
+
 @app.get("/")
 def root():
     """
