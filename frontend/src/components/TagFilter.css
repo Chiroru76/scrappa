@@ -1,0 +1,38 @@
+.tag-filter {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tag-filter::-webkit-scrollbar {
+  display: none;
+}
+
+.tag-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border: 1px solid #c8bfaa;
+  border-radius: 20px;
+  background-color: #fff;
+  color: #555;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.tag-btn.active {
+  background-color: #2c5f2e;
+  color: #fff;
+  border-color: #2c5f2e;
+}
+
+.tag-count {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
