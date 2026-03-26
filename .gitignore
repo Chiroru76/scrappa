@@ -25,3 +25,5 @@ dist/
 .idea/
 *.swp
 *.swo
+
+.claude/
