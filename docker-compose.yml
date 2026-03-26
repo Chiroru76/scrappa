@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: scrappa-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      # ソースコードをマウント
+      - ./frontend:/app
+      # node_modulesは名前付きボリュームで上書き
+      - /app/node_modules
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - backend
+    networks:
+      - scrappa-network
+    stdin_open: true  # Reactの開発サーバーがクラッシュしないように
+    tty: true
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: scrappa-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      # ソースコードをマウント
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    networks:
+      - scrappa-network
+
+networks:
+  scrappa-network:
+    driver: bridge
+
+volumes:
+  frontend_node_modules:
