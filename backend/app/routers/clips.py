@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
 from typing import Optional
 import uuid
 import json
@@ -7,6 +7,7 @@ from app.models.clip import ClipResponse
 from app.services.image import process_image
 from app.services.storage import upload_to_s3
 from app.db.supabase import supabase
+from app.middleware.auth import get_current_user
 
 router = APIRouter()
 
@@ -14,7 +15,8 @@ router = APIRouter()
 async def create_clip(
     file: UploadFile = File(..., description="画像ファイル（JPEG/PNG/WebP、10MB以下）"),
     tags: Optional[str] = Form(default="[]", description="タグ名のリスト（JSON配列文字列: '[\"ロゴ\", \"モノクロ\"]'）"),
-    page: Optional[int] = Form(default=None, description="配置ページ番号")
+    page: Optional[int] = Form(default=None, description="配置ページ番号"),
+    user_id: str = Depends(get_current_user),
 ):
     """
     画像をアップロードしてクリップを作成
@@ -40,9 +42,6 @@ async def create_clip(
     clip_id = str(uuid.uuid4())
     filename = f"clips/{clip_id}.jpg"
     image_url = upload_to_s3(processed_image, filename)
-    
-    # 4. Supabaseに保存（認証なし版：固定user_id）
-    user_id = "00000000-0000-0000-0000-000000000001"  # Step 4で実際の認証に置き換え
     
     # ページ番号決定（省略時は最終ページ）
     if page is None:
@@ -122,16 +121,16 @@ async def create_clip(
 async def get_clips(
     tag: Optional[str] = None,
     page: int = 1,
-    limit: int = 24
+    limit: int = 24,
+    user_id: str = Depends(get_current_user),
 ):
     """
     クリップ一覧を取得
-    
+
     - **tag**: タグ名でフィルタ（省略可）
     - **page**: ページ番号（デフォルト: 1）
     - **limit**: 取得件数（デフォルト: 24）
     """
-    user_id = "00000000-0000-0000-0000-000000000001"  # Step 4で実際の認証に置き換え
     
     # オフセット計算
     offset = (page - 1) * limit
