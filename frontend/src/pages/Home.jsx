@@ -5,14 +5,16 @@ import { useClips } from '../hooks/useClips'
 import { useTags } from '../hooks/useTags'
 import Book from '../components/book/Book'
 import TagFilter from '../components/TagFilter'
+import UploadModal from '../components/upload/UploadModal'
 import './Home.css'
 
 export default function Home() {
   const [user, setUser] = useState(null)
   const [selectedTag, setSelectedTag] = useState(null)
+  const [showUpload, setShowUpload] = useState(false)
   const navigate = useNavigate()
 
-  const { clips, loading: clipsLoading } = useClips(selectedTag)
+  const { clips, loading: clipsLoading, refetch } = useClips(selectedTag)
   const { tags } = useTags()
 
   useEffect(() => {
@@ -36,8 +38,18 @@ export default function Home() {
     <div className="home">
       <header className="home-header">
         <h1 className="home-title">Scrappa</h1>
-        <button className="logout-btn" onClick={handleLogout}>ログアウト</button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button className="upload-btn" onClick={() => setShowUpload(true)}>+ アップロード</button>
+          <button className="logout-btn" onClick={handleLogout}>ログアウト</button>
+        </div>
       </header>
+
+      {showUpload && (
+        <UploadModal
+          onClose={() => setShowUpload(false)}
+          onUploaded={refetch}
+        />
+      )}
 
       <TagFilter
         tags={tags}
