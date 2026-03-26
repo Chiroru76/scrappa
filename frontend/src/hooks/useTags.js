@@ -10,7 +10,7 @@ export function useTags() {
     async function fetchTags() {
       try {
         setLoading(true)
-        const response = await api.get('/tags')
+        const response = await api.get('/tags/')
         setTags(response.data.tags)
       } catch (err) {
         setError(err)
