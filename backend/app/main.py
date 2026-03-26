@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.routers import clips, tags
 
 app = FastAPI(
     title="Scrappa API",
@@ -18,6 +19,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ルーター登録
+app.include_router(clips.router, prefix="/clips", tags=["clips"])
+app.include_router(tags.router, prefix="/tags", tags=["tags"])
 
 @app.get("/")
 def root():
