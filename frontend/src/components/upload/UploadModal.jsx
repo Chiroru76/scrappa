@@ -1,13 +1,24 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import Cropper from 'react-easy-crop'
 import { useTags } from '../../hooks/useTags'
 import api from '../../lib/api'
+import { getCroppedBlob } from '../../lib/cropImage'
 import './UploadModal.css'
 
 export default function UploadModal({ onClose, onUploaded }) {
-  const [file, setFile] = useState(null)
-  const [preview, setPreview] = useState(null)
+  // フェーズ管理: 'select' → 'crop' → 'preview'
+  const [phase, setPhase] = useState('select')
+  const [imageSrc, setImageSrc] = useState(null)  // 元画像のblob URL（クロップUI用）
+  const [file, setFile] = useState(null)           // クロップ済みファイル（送信用）
+  const [preview, setPreview] = useState(null)     // クロップ済みプレビューURL
   const [isDragging, setIsDragging] = useState(false)
+
+  // react-easy-crop の状態
+  const [crop, setCrop] = useState({ x: 0, y: 0 })
+  const [zoom, setZoom] = useState(1)
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
+
   const [selectedTags, setSelectedTags] = useState([])
   const [tagInput, setTagInput] = useState('')
   const [uploading, setUploading] = useState(false)
@@ -25,9 +36,12 @@ export default function UploadModal({ onClose, onUploaded }) {
     return () => document.removeEventListener('keydown', handleKeyDown)
   }, [onClose])
 
+  // ファイル選択後 → クロップフェーズへ
   const applyFile = (selected) => {
-    setFile(selected)
-    setPreview(URL.createObjectURL(selected))
+    setImageSrc(URL.createObjectURL(selected))
+    setPhase('crop')
+    setCrop({ x: 0, y: 0 })
+    setZoom(1)
   }
 
   const handleFileSelect = (e) => {
@@ -51,6 +65,20 @@ export default function UploadModal({ onClose, onUploaded }) {
     if (dropped && dropped.type.startsWith('image/')) {
       applyFile(dropped)
     }
+  }
+
+  // クロップ完了時に座標を保存
+  const onCropComplete = useCallback((_, pixels) => {
+    setCroppedAreaPixels(pixels)
+  }, [])
+
+  // 「確定」ボタン → Canvas APIでクロップ済みblobを生成してプレビューへ
+  const handleCropConfirm = async () => {
+    const blob = await getCroppedBlob(imageSrc, croppedAreaPixels)
+    const croppedFile = new File([blob], 'cropped.jpg', { type: 'image/jpeg' })
+    setFile(croppedFile)
+    setPreview(URL.createObjectURL(blob))
+    setPhase('preview')
   }
 
   const handleTagKeyDown = (e) => {
@@ -106,19 +134,8 @@ export default function UploadModal({ onClose, onUploaded }) {
             onChange={handleFileSelect}
           />
 
-          {preview ? (
-            /* プレビュー表示 */
-            <div className="preview-area">
-              <img src={preview} alt="プレビュー" className="preview-image" />
-              <button
-                className="change-file-btn"
-                onClick={() => inputRef.current.click()}
-              >
-                画像を変更
-              </button>
-            </div>
-          ) : (
-            /* クリック＋ドラッグ&ドロップでファイル選択 */
+          {/* フェーズ1: ファイル選択 */}
+          {phase === 'select' && (
             <div
               className={`drop-zone ${isDragging ? 'dragging' : ''}`}
               onClick={() => inputRef.current.click()}
@@ -133,39 +150,89 @@ export default function UploadModal({ onClose, onUploaded }) {
             </div>
           )}
 
-          {/* タグ選択 */}
-          <div className="tag-input-area">
-            <label className="tag-label">タグ</label>
-            <div className="tag-chips">
-              {selectedTags.map((tag) => (
-                <span key={tag} className="tag-chip">
-                  {tag}
-                  <button className="tag-chip-remove" onClick={() => removeTag(tag)}>×</button>
-                </span>
-              ))}
-              <input
-                className="tag-input"
-                type="text"
-                list="tag-suggestions"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyDown={handleTagKeyDown}
-                placeholder="タグを入力してEnter"
-              />
-              <datalist id="tag-suggestions">
-                {existingTags
-                  .filter((t) => !selectedTags.includes(t.name))
-                  .map((t) => (
-                    <option key={t.id} value={t.name} />
-                  ))}
-              </datalist>
+          {/* フェーズ2: クロップUI */}
+          {phase === 'crop' && (
+            <div>
+              <div className="crop-container">
+                <Cropper
+                  image={imageSrc}
+                  crop={crop}
+                  zoom={zoom}
+                  aspect={1}
+                  onCropChange={setCrop}
+                  onZoomChange={setZoom}
+                  onCropComplete={onCropComplete}
+                />
+              </div>
+              <div className="crop-controls">
+                <input
+                  className="zoom-slider"
+                  type="range"
+                  min={1}
+                  max={3}
+                  step={0.1}
+                  value={zoom}
+                  onChange={(e) => setZoom(Number(e.target.value))}
+                />
+                <button className="crop-confirm-btn" onClick={handleCropConfirm}>
+                  確定
+                </button>
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* フェーズ3: プレビュー */}
+          {phase === 'preview' && (
+            <div className="preview-area">
+              <img src={preview} alt="プレビュー" className="preview-image" />
+              <button
+                className="change-file-btn"
+                onClick={() => setPhase('select')}
+              >
+                画像を変更
+              </button>
+            </div>
+          )}
+
+          {/* タグ選択（フェーズ3のみ表示） */}
+          {phase === 'preview' && (
+            <div className="tag-input-area">
+              <label className="tag-label">タグ</label>
+              <div className="tag-chips">
+                {selectedTags.map((tag) => (
+                  <span key={tag} className="tag-chip">
+                    {tag}
+                    <button className="tag-chip-remove" onClick={() => removeTag(tag)}>×</button>
+                  </span>
+                ))}
+                <input
+                  className="tag-input"
+                  type="text"
+                  list="tag-suggestions"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={handleTagKeyDown}
+                  placeholder="タグを入力してEnter"
+                />
+                <datalist id="tag-suggestions">
+                  {existingTags
+                    .filter((t) => !selectedTags.includes(t.name))
+                    .map((t) => (
+                      <option key={t.id} value={t.name} />
+                    ))}
+                </datalist>
+              </div>
+            </div>
+          )}
         </div>
         <div className="modal-footer">
           {error && <p className="upload-error">{error}</p>}
           <button className="cancel-btn" onClick={onClose} disabled={uploading}>キャンセル</button>
-          <button className="submit-btn" disabled={!file || uploading} onClick={handleSubmit}>
+          <button
+            className="submit-btn"
+            disabled={phase !== 'preview' || uploading}
+            onClick={handleSubmit}
+          >
             {uploading ? 'アップロード中...' : 'アップロード'}
           </button>
         </div>
