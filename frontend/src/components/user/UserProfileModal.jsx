@@ -30,9 +30,13 @@ export default function UserProfileModal({ user, onClose, onUpdated }) {
         avatarUrl = res.data.avatar_url
       }
 
+      const trimmedName = name.trim()
       await supabase.auth.updateUser({
-        data: { display_name: name.trim(), avatar_url: avatarUrl }
+        data: { display_name: trimmedName, avatar_url: avatarUrl }
       })
+
+      // profiles テーブルに同期（ユーザー検索に使用）
+      await api.patch('/users/me', { display_name: trimmedName, avatar_url: avatarUrl })
 
       await onUpdated()
       onClose()
