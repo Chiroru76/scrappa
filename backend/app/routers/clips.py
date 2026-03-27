@@ -176,22 +176,40 @@ async def get_clips(
             .execute()
     
     clips_data = response.data
-    
-    # 各クリップのタグを取得
+
+    # タグを一括取得（N+1を避けるため3クエリで処理）
     clips_with_tags = []
-    for clip in clips_data:
-        # タグ取得（JOIN: clip_tags + tags）
-        tags_response = supabase.table("clip_tags")\
-            .select("tag_id, tags(name)")\
-            .eq("clip_id", clip["id"])\
+    if clips_data:
+        clip_ids = [clip["id"] for clip in clips_data]
+
+        # clip_tags を一括取得
+        ct_response = supabase.table("clip_tags")\
+            .select("clip_id, tag_id")\
+            .in_("clip_id", clip_ids)\
             .execute()
-        
-        tag_names = [item["tags"]["name"] for item in tags_response.data]
-        
-        clips_with_tags.append({
-            **clip,
-            "tags": tag_names
-        })
+
+        # tag_id → tag_name のマップを作成
+        tag_ids = list({row["tag_id"] for row in ct_response.data})
+        tag_id_to_name = {}
+        if tag_ids:
+            tags_response = supabase.table("tags")\
+                .select("id, name")\
+                .in_("id", tag_ids)\
+                .execute()
+            tag_id_to_name = {row["id"]: row["name"] for row in tags_response.data}
+
+        # clip_id → [tag_name] のマップを作成
+        clip_tags_map: dict = {}
+        for row in ct_response.data:
+            name = tag_id_to_name.get(row["tag_id"])
+            if name:
+                clip_tags_map.setdefault(row["clip_id"], []).append(name)
+
+        for clip in clips_data:
+            clips_with_tags.append({
+                **clip,
+                "tags": clip_tags_map.get(clip["id"], [])
+            })
     
     # 総件数取得
     count_response = supabase.table("clips")\
