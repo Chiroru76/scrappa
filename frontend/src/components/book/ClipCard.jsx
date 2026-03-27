@@ -2,7 +2,11 @@ import './ClipCard.css'
 
 export default function ClipCard({ clip, onOpen, onEmptyClick }) {
   if (!clip) {
-    return <div className="clip-card empty" onClick={onEmptyClick} />
+    return (
+      <div className="clip-card empty" onClick={onEmptyClick}>
+        <span className="empty-plus">+</span>
+      </div>
+    )
   }
 
   return (

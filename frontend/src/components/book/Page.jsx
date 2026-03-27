@@ -1,13 +1,8 @@
 import ClipCard from './ClipCard'
 import './Page.css'
 
-const CLIPS_PER_PAGE = 12
-
-export default function Page({ clips = [], pageNumber, side, onClipClick, onEmptyClick }) {
-  const paddedClips = [
-    ...clips,
-    ...Array(Math.max(0, CLIPS_PER_PAGE - clips.length)).fill(null)
-  ]
+export default function Page({ clips = [], side, showEmptySlot, onClipClick, onEmptyClick }) {
+  const paddedClips = showEmptySlot ? [...clips, null] : clips
 
   return (
     <div className={`page page-${side}`}>
@@ -21,7 +16,6 @@ export default function Page({ clips = [], pageNumber, side, onClipClick, onEmpt
           />
         ))}
       </div>
-      <div className="page-number">{pageNumber}</div>
     </div>
   )
 }
