@@ -58,7 +58,11 @@ export default function TagFilter({ tags, selectedTag, onSelect, onTagRenamed, o
               onBlur={() => handleRenameConfirm(tag)}
               autoFocus
             />
-            <button className="tag-edit-delete" onClick={() => handleDelete(tag)}>×</button>
+            <button
+              className="tag-edit-delete"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => handleDelete(tag)}
+            >×</button>
           </div>
         ) : (
           <div key={tag.id} className="tag-btn-wrapper">

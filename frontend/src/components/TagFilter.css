@@ -48,16 +48,28 @@
 .tag-edit-icon {
   display: none;
   background: none;
-  border: none;
-  font-size: 0.7rem;
+  border: 1px solid #c8bfaa;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 0.65rem;
   cursor: pointer;
-  color: #aaa;
-  padding: 2px 4px;
+  color: #777;
+  padding: 0;
   line-height: 1;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 
 .tag-btn-wrapper:hover .tag-edit-icon {
-  display: inline-block;
+  display: flex;
+}
+
+.tag-edit-icon:hover {
+  background-color: #f0ebe0;
+  border-color: #aaa;
 }
 
 .tag-edit-row {
@@ -75,6 +87,7 @@
   outline: none;
   width: 120px;
   color: #333;
+  background-color: #fff;
 }
 
 .tag-edit-delete {
