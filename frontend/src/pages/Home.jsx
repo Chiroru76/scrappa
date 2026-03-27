@@ -72,7 +72,7 @@ export default function Home() {
         {clipsLoading ? (
           <p className="loading-text">読み込み中...</p>
         ) : (
-          <Book clips={clips} onClipClick={setSelectedClip} />
+          <Book clips={clips} onClipClick={setSelectedClip} onEmptyClick={() => setShowUpload(true)} />
         )}
       </main>
     </div>

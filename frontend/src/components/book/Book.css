@@ -1,10 +1,107 @@
-.book-wrapper {
+.book-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
   padding: 24px;
+  gap: 16px;
 }
 
-.flip-book {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+.notebook-spread {
+  display: flex;
+  align-items: stretch;
+  filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.18));
+}
+
+/* コイル製本 */
+.ring-binding {
+  width: 32px;
+  background: linear-gradient(to right, #bab8b4 0%, #dedad4 35%, #edeae4 50%, #dedad4 65%, #bab8b4 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 10px 0;
+  z-index: 1;
+  position: relative;
+}
+
+/* コイルひとつ = 正面から見た螺旋の輪の断面 */
+.coil {
+  width: 28px;
+  height: 9px;
+  border-radius: 50%;
+  background: linear-gradient(
+    180deg,
+    #f2f1ef 0%,
+    #d4d2d0 20%,
+    #9a9896 45%,
+    #b8b6b4 70%,
+    #dcdad8 90%,
+    #eeedeb 100%
+  );
+  border: 1.5px solid #7a7876;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.45),
+    0 1px 1px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.55);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 金属光沢のハイライト（左上の反射光） */
+.coil::before {
+  content: '';
+  position: absolute;
+  top: 8%;
+  left: 18%;
+  width: 28%;
+  height: 42%;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  filter: blur(1px);
+}
+
+/* 右端の薄い反射 */
+.coil::after {
+  content: '';
+  position: absolute;
+  top: 20%;
+  right: 10%;
+  width: 12%;
+  height: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  filter: blur(1px);
+}
+
+/* ナビゲーション */
+.spread-navigation {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: #333;
+  padding: 4px 8px;
+  transition: color 0.15s;
+}
+
+.nav-btn:hover:not(:disabled) {
+  color: #000;
+}
+
+.nav-btn:disabled {
+  cursor: default;
+}
+
+.nav-indicator {
+  font-size: 0.8rem;
+  color: #888;
+  min-width: 40px;
+  text-align: center;
 }

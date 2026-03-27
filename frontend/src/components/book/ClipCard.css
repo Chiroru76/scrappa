@@ -8,8 +8,30 @@
 }
 
 .clip-card.empty {
-  background-color: #f0ebe0;
-  border: 1px dashed #c8bfaa;
+  background-color: transparent;
+  border: 1.5px dashed #c8c4b4;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clip-card.empty:hover {
+  border-color: #2c5f2e;
+  background-color: rgba(44, 95, 46, 0.04);
+}
+
+.empty-plus {
+  font-size: 1.4rem;
+  color: #c8c4b4;
+  line-height: 1;
+  transition: color 0.15s;
+  user-select: none;
+}
+
+.clip-card.empty:hover .empty-plus {
+  color: #2c5f2e;
 }
 
 .clip-image {
@@ -31,8 +53,8 @@
   right: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  padding: 6px;
+  gap: 3px;
+  padding: 5px;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.5));
   opacity: 0;
   transition: opacity 0.2s;
@@ -43,9 +65,9 @@
 }
 
 .clip-tag {
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   color: #fff;
   background-color: rgba(0, 0, 0, 0.4);
-  padding: 2px 6px;
+  padding: 1px 5px;
   border-radius: 10px;
 }
