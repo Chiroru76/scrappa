@@ -17,6 +17,7 @@ export default function UploadModal({ onClose, onUploaded }) {
   // react-easy-crop の状態
   const [crop, setCrop] = useState({ x: 0, y: 0 })
   const [zoom, setZoom] = useState(1)
+  const [rotation, setRotation] = useState(0)
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
 
   const [selectedTags, setSelectedTags] = useState([])
@@ -42,6 +43,7 @@ export default function UploadModal({ onClose, onUploaded }) {
     setPhase('crop')
     setCrop({ x: 0, y: 0 })
     setZoom(1)
+    setRotation(0)
   }
 
   const handleFileSelect = (e) => {
@@ -74,7 +76,7 @@ export default function UploadModal({ onClose, onUploaded }) {
 
   // 「確定」ボタン → Canvas APIでクロップ済みblobを生成してプレビューへ
   const handleCropConfirm = async () => {
-    const blob = await getCroppedBlob(imageSrc, croppedAreaPixels)
+    const blob = await getCroppedBlob(imageSrc, croppedAreaPixels, rotation)
     const croppedFile = new File([blob], 'cropped.jpg', { type: 'image/jpeg' })
     setFile(croppedFile)
     setPreview(URL.createObjectURL(blob))
@@ -158,22 +160,40 @@ export default function UploadModal({ onClose, onUploaded }) {
                   image={imageSrc}
                   crop={crop}
                   zoom={zoom}
+                  rotation={rotation}
                   aspect={1}
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
+                  onRotationChange={setRotation}
                   onCropComplete={onCropComplete}
                 />
               </div>
               <div className="crop-controls">
-                <input
-                  className="zoom-slider"
-                  type="range"
-                  min={1}
-                  max={3}
-                  step={0.1}
-                  value={zoom}
-                  onChange={(e) => setZoom(Number(e.target.value))}
-                />
+                <div className="crop-control-row">
+                  <span className="crop-control-label">拡大</span>
+                  <input
+                    className="zoom-slider"
+                    type="range"
+                    min={1}
+                    max={10}
+                    step={0.1}
+                    value={zoom}
+                    onChange={(e) => setZoom(Number(e.target.value))}
+                  />
+                </div>
+                <div className="crop-control-row">
+                  <span className="crop-control-label">傾き</span>
+                  <input
+                    className="zoom-slider"
+                    type="range"
+                    min={-45}
+                    max={45}
+                    step={1}
+                    value={rotation}
+                    onChange={(e) => setRotation(Number(e.target.value))}
+                  />
+                  <span className="crop-control-value">{rotation}°</span>
+                </div>
                 <button className="crop-confirm-btn" onClick={handleCropConfirm}>
                   確定
                 </button>
