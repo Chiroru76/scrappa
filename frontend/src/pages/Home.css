@@ -21,20 +21,6 @@
   letter-spacing: 0.05em;
 }
 
-.logout-btn {
-  padding: 6px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 6px;
-  background: transparent;
-  color: #fff;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background-color 0.15s;
-}
-
-.logout-btn:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-}
 
 .home-main {
   flex: 1;
