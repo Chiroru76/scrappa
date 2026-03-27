@@ -5,14 +5,11 @@ import './Book.css'
 const CLIPS_PER_SPREAD = 24
 
 function RingBinding() {
-  const rings = Array.from({ length: 12 })
+  const coils = Array.from({ length: 34 })
   return (
     <div className="ring-binding">
-      {rings.map((_, i) => (
-        <div key={i} className="ring">
-          <div className="ring-top" />
-          <div className="ring-bottom" />
-        </div>
+      {coils.map((_, i) => (
+        <div key={i} className="coil" />
       ))}
     </div>
   )
@@ -50,21 +47,26 @@ export default function Book({ clips, onClipClick, onEmptyClick }) {
   const leftClips  = clips.slice(currentSpread * CLIPS_PER_SPREAD, currentSpread * CLIPS_PER_SPREAD + 12)
   const rightClips = clips.slice(currentSpread * CLIPS_PER_SPREAD + 12, currentSpread * CLIPS_PER_SPREAD + 24)
 
+  // 空スロットは最後のクリップの直後1箇所のみ表示する
+  const isLastSpread = currentSpread === totalSpreads - 1
+  const leftShowEmpty  = isLastSpread && leftClips.length < 12
+  const rightShowEmpty = isLastSpread && leftClips.length === 12 && rightClips.length < 12
+
   return (
     <div className="book-container">
       <div className="notebook-spread">
         <Page
           clips={leftClips}
-          pageNumber={currentSpread * 2 + 1}
           side="left"
+          showEmptySlot={leftShowEmpty}
           onClipClick={onClipClick}
           onEmptyClick={onEmptyClick}
         />
         <RingBinding />
         <Page
           clips={rightClips}
-          pageNumber={currentSpread * 2 + 2}
           side="right"
+          showEmptySlot={rightShowEmpty}
           onClipClick={onClipClick}
           onEmptyClick={onEmptyClick}
         />
