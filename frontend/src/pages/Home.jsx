@@ -6,12 +6,14 @@ import { useTags } from '../hooks/useTags'
 import Book from '../components/book/Book'
 import TagFilter from '../components/TagFilter'
 import UploadModal from '../components/upload/UploadModal'
+import ClipDetailModal from '../components/clip/ClipDetailModal'
 import './Home.css'
 
 export default function Home() {
   const [user, setUser] = useState(null)
   const [selectedTag, setSelectedTag] = useState(null)
   const [showUpload, setShowUpload] = useState(false)
+  const [selectedClip, setSelectedClip] = useState(null)
   const navigate = useNavigate()
 
   const { clips, loading: clipsLoading, refetch } = useClips(selectedTag)
@@ -51,6 +53,15 @@ export default function Home() {
         />
       )}
 
+      {selectedClip && (
+        <ClipDetailModal
+          clip={selectedClip}
+          onClose={() => setSelectedClip(null)}
+          onUpdated={refetch}
+          onDeleted={() => { setSelectedClip(null); refetch() }}
+        />
+      )}
+
       <TagFilter
         tags={tags}
         selectedTag={selectedTag}
@@ -61,7 +72,7 @@ export default function Home() {
         {clipsLoading ? (
           <p className="loading-text">読み込み中...</p>
         ) : (
-          <Book clips={clips} />
+          <Book clips={clips} onClipClick={setSelectedClip} />
         )}
       </main>
     </div>
