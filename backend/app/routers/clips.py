@@ -121,7 +121,7 @@ async def create_clip(
 async def get_clips(
     tag: Optional[str] = None,
     page: int = 1,
-    limit: int = 24,
+    limit: int = 1000,
     user_id: str = Depends(get_current_user),
 ):
     """
@@ -163,7 +163,7 @@ async def get_clips(
             .select("*")\
             .eq("user_id", user_id)\
             .in_("id", clip_ids)\
-            .order("created_at", desc=True)\
+            .order("created_at", desc=False)\
             .range(offset, offset + limit - 1)\
             .execute()
     else:
@@ -171,7 +171,7 @@ async def get_clips(
         response = supabase.table("clips")\
             .select("*")\
             .eq("user_id", user_id)\
-            .order("created_at", desc=True)\
+            .order("created_at", desc=False)\
             .range(offset, offset + limit - 1)\
             .execute()
     
