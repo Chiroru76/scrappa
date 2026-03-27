@@ -1,7 +1,9 @@
 import './ClipCard.css'
 
-export default function ClipCard({ clip, onOpen }) {
-  if (!clip) return <div className="clip-card empty" />
+export default function ClipCard({ clip, onOpen, onEmptyClick }) {
+  if (!clip) {
+    return <div className="clip-card empty" onClick={onEmptyClick} />
+  }
 
   return (
     <div className="clip-card" onClick={() => onOpen(clip)}>

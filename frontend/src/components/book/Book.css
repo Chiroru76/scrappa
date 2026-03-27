@@ -1,10 +1,86 @@
-.book-wrapper {
+.book-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
   padding: 24px;
+  gap: 16px;
 }
 
-.flip-book {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+.notebook-spread {
+  display: flex;
+  align-items: stretch;
+  filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.18));
+}
+
+/* リング列 */
+.ring-binding {
+  width: 24px;
+  background: linear-gradient(to right, #e0dcd0, #edeae0, #e0dcd0);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 16px 0;
+  z-index: 1;
+}
+
+.ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ring-top {
+  width: 16px;
+  height: 8px;
+  border-radius: 8px 8px 0 0;
+  border: 2.5px solid #b8860b;
+  border-bottom: none;
+  background: linear-gradient(180deg, #f0d060 0%, #d4a010 50%, #a07008 100%);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.ring-bottom {
+  width: 16px;
+  height: 8px;
+  border-radius: 0 0 8px 8px;
+  border: 2.5px solid #b8860b;
+  border-top: none;
+  background: linear-gradient(0deg, #f0d060 0%, #d4a010 50%, #a07008 100%);
+}
+
+/* ナビゲーション */
+.spread-navigation {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background-color: #f0ebe0;
+}
+
+.nav-btn:disabled {
+  cursor: default;
+}
+
+.nav-indicator {
+  font-size: 0.8rem;
+  color: #888;
+  min-width: 40px;
+  text-align: center;
 }
