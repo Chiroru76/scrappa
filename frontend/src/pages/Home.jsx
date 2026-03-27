@@ -17,7 +17,19 @@ export default function Home() {
   const navigate = useNavigate()
 
   const { clips, loading: clipsLoading, refetch } = useClips(selectedTag)
-  const { tags } = useTags()
+  const { tags, refetch: refetchTags } = useTags()
+
+  const handleTagRenamed = (oldName, newName) => {
+    refetchTags()
+    refetch()
+    if (selectedTag === oldName) setSelectedTag(newName)
+  }
+
+  const handleTagDeleted = (name) => {
+    refetchTags()
+    refetch()
+    if (selectedTag === name) setSelectedTag(null)
+  }
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -66,6 +78,8 @@ export default function Home() {
         tags={tags}
         selectedTag={selectedTag}
         onSelect={setSelectedTag}
+        onTagRenamed={handleTagRenamed}
+        onTagDeleted={handleTagDeleted}
       />
 
       <main className="home-main">

@@ -36,3 +36,66 @@
   font-size: 0.75rem;
   opacity: 0.7;
 }
+
+/* タグ編集UI */
+.tag-btn-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.tag-edit-icon {
+  display: none;
+  background: none;
+  border: 1px solid #c8bfaa;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 0.65rem;
+  cursor: pointer;
+  color: #777;
+  padding: 0;
+  line-height: 1;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.tag-btn-wrapper:hover .tag-edit-icon {
+  display: flex;
+}
+
+.tag-edit-icon:hover {
+  background-color: #f0ebe0;
+  border-color: #aaa;
+}
+
+.tag-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tag-edit-input {
+  border: 1px solid #2c5f2e;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.85rem;
+  outline: none;
+  width: 120px;
+  color: #333;
+  background-color: #fff;
+}
+
+.tag-edit-delete {
+  background: none;
+  border: none;
+  color: #c0392b;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 4px;
+  line-height: 1;
+}
