@@ -4,7 +4,7 @@ import './Page.css'
 
 const CLIPS_PER_PAGE = 12
 
-const Page = React.forwardRef(({ clips = [], pageNumber }, ref) => {
+const Page = React.forwardRef(({ clips = [], pageNumber, onClipClick }, ref) => {
   // 12枚に満たない場合はnullで埋める
   const paddedClips = [
     ...clips,
@@ -15,7 +15,7 @@ const Page = React.forwardRef(({ clips = [], pageNumber }, ref) => {
     <div className="page" ref={ref}>
       <div className="page-grid">
         {paddedClips.map((clip, i) => (
-          <ClipCard key={clip?.id ?? `empty-${i}`} clip={clip} />
+          <ClipCard key={clip?.id ?? `empty-${i}`} clip={clip} onOpen={onClipClick} />
         ))}
       </div>
       <div className="page-number">{pageNumber}</div>

@@ -4,7 +4,7 @@ import './Book.css'
 
 const CLIPS_PER_PAGE = 12
 
-export default function Book({ clips }) {
+export default function Book({ clips, onClipClick }) {
   // クリップを12枚ずつのページに分割
   const pages = []
   for (let i = 0; i < Math.max(clips.length, 1); i += CLIPS_PER_PAGE) {
@@ -28,6 +28,7 @@ export default function Book({ clips }) {
             key={index}
             clips={pageClips}
             pageNumber={index + 1}
+            onClipClick={onClipClick}
           />
         ))}
       </HTMLFlipBook>

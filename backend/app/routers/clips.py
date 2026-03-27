@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, Response
 from typing import Optional
 import uuid
 import json
 
-from app.models.clip import ClipResponse
+from app.models.clip import ClipResponse, ClipUpdate
 from app.services.image import process_image
-from app.services.storage import upload_to_s3
+from app.services.storage import upload_to_s3, delete_from_s3
 from app.db.supabase import supabase
 from app.middleware.auth import get_current_user
 
@@ -206,3 +206,58 @@ async def get_clips(
         "page": page,
         "limit": limit
     }
+
+@router.patch("/{clip_id}/", response_model=dict)
+async def update_clip(
+    clip_id: str,
+    body: ClipUpdate,
+    user_id: str = Depends(get_current_user),
+):
+    """
+    クリップのタグを更新（全差し替え）
+    """
+    # 所有権確認
+    res = supabase.table("clips").select("id").eq("id", clip_id).eq("user_id", user_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Clip not found")
+
+    # 既存タグ関連を全削除してから再挿入（全差し替え方式）
+    supabase.table("clip_tags").delete().eq("clip_id", clip_id).execute()
+
+    tag_names = []
+    if body.tags:
+        for tag_name in body.tags:
+            tag_res = supabase.table("tags").select("*").eq("user_id", user_id).eq("name", tag_name).execute()
+            if tag_res.data:
+                tag = tag_res.data[0]
+            else:
+                tag = supabase.table("tags").insert({"user_id": user_id, "name": tag_name}).execute().data[0]
+            supabase.table("clip_tags").insert({"clip_id": clip_id, "tag_id": tag["id"]}).execute()
+            tag_names.append(tag_name)
+
+    return {"id": clip_id, "tags": tag_names}
+
+
+@router.delete("/{clip_id}/", status_code=204)
+async def delete_clip(
+    clip_id: str,
+    user_id: str = Depends(get_current_user),
+):
+    """
+    クリップを削除（clip_tags → clips → S3 の順で削除）
+    """
+    # 所有権確認（image_urlも取得）
+    res = supabase.table("clips").select("id, image_url").eq("id", clip_id).eq("user_id", user_id).execute()
+    if not res.data:
+        raise HTTPException(status_code=404, detail="Clip not found")
+
+    image_url = res.data[0]["image_url"]
+    # S3キーの抽出（URLから ".amazonaws.com/" 以降を取得）
+    s3_key = image_url.split(".amazonaws.com/")[1]
+
+    # DBを先に削除してからS3削除（孤立レコードを防ぐ）
+    supabase.table("clip_tags").delete().eq("clip_id", clip_id).execute()
+    supabase.table("clips").delete().eq("id", clip_id).execute()
+    delete_from_s3(s3_key)
+
+    return Response(status_code=204)
