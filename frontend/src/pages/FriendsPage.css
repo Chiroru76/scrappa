@@ -1,0 +1,210 @@
+.friends-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #f5f0e8;
+}
+
+/* セクションタブ */
+.fp-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 12px 24px 0;
+  border-bottom: 1px solid #ddd8cc;
+  background: #f5f0e8;
+}
+
+.fp-tab {
+  padding: 8px 18px;
+  border: none;
+  background: none;
+  font-size: 0.88rem;
+  color: #666;
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  position: relative;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.fp-tab:hover {
+  background: rgba(44, 95, 46, 0.08);
+  color: #2c5f2e;
+}
+
+.fp-tab.active {
+  background: #fff;
+  color: #2c5f2e;
+  font-weight: 600;
+  box-shadow: 0 -2px 0 0 #2c5f2e inset;
+}
+
+.fp-badge-count {
+  display: inline-block;
+  background: #e74c3c;
+  color: #fff;
+  font-size: 0.7rem;
+  border-radius: 10px;
+  padding: 1px 5px;
+  margin-left: 4px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+/* コンテンツエリア */
+.fp-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.fp-section {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* 検索インプット */
+.fp-search-input {
+  width: 100%;
+  padding: 10px 16px;
+  border: 1px solid #d0cbbf;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  background: #fff;
+  color: #222;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  transition: border-color 0.15s;
+}
+
+.fp-search-input:focus {
+  border-color: #2c5f2e;
+}
+
+/* ユーザー行 */
+.fp-user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fp-user-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.fp-user-row--clickable {
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+.fp-user-row--clickable:hover {
+  background: #faf7f2;
+}
+
+.fp-avatar {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.fp-avatar-initials {
+  background: #d8d4c8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #666;
+  flex-shrink: 0;
+}
+
+.fp-user-name {
+  flex: 1;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: #222;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fp-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ボタン */
+.fp-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.84rem;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.1s;
+}
+
+.fp-btn--primary {
+  background: #2c5f2e;
+  color: #fff;
+}
+
+.fp-btn--primary:hover {
+  background: #245024;
+}
+
+.fp-btn--ghost {
+  background: #f0ebe0;
+  color: #555;
+}
+
+.fp-btn--ghost:hover {
+  background: #e8e2d4;
+}
+
+.fp-btn--sm {
+  padding: 4px 10px;
+  font-size: 0.78rem;
+}
+
+/* バッジ */
+.fp-badge {
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.fp-badge--friend {
+  background: #e8f5e9;
+  color: #2c5f2e;
+}
+
+.fp-badge--pending {
+  background: #fff3e0;
+  color: #e67e22;
+}
+
+.fp-badge--received {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+/* ヒント文 */
+.fp-hint {
+  color: #888;
+  font-size: 0.88rem;
+  text-align: center;
+  padding: 32px 0;
+}
+
+.fp-hint-sm {
+  color: #aaa;
+  font-size: 0.78rem;
+}

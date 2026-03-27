@@ -279,3 +279,17 @@ async def delete_clip(
     delete_from_s3(s3_key)
 
     return Response(status_code=204)
+
+
+@router.post("/{clip_id}/likes", status_code=201, response_model=dict)
+async def like_clip(clip_id: str, user_id: str = Depends(get_current_user)):
+    """クリップにいいねする（重複は無視）"""
+    supabase.table("likes").upsert({"clip_id": clip_id, "user_id": user_id}).execute()
+    return {"ok": True}
+
+
+@router.delete("/{clip_id}/likes", status_code=204)
+async def unlike_clip(clip_id: str, user_id: str = Depends(get_current_user)):
+    """いいねを取り消す"""
+    supabase.table("likes").delete().eq("clip_id", clip_id).eq("user_id", user_id).execute()
+    return Response(status_code=204)

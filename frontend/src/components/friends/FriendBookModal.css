@@ -1,0 +1,133 @@
+.friend-book-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.friend-book-modal {
+  background: #f5f0e8;
+  border-radius: 12px;
+  width: min(860px, 95vw);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.friend-book-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #2c5f2e;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.friend-book-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.friend-book-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.5);
+}
+
+.friend-book-initials {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.friend-book-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.friend-book-close {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.8);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.1s;
+}
+
+.friend-book-close:hover {
+  color: #fff;
+}
+
+.friend-book-body {
+  overflow-y: auto;
+  padding: 20px;
+  flex: 1;
+}
+
+.friend-book-loading,
+.friend-book-empty {
+  text-align: center;
+  color: #888;
+  padding: 40px 0;
+}
+
+/* クリップグリッド */
+.friend-clips-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.friend-clip-card {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #e8e4d8;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+.friend-clip-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.friend-clip-like {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: rgba(255,255,255,0.88);
+  border: none;
+  border-radius: 12px;
+  padding: 3px 8px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: #888;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+.friend-clip-like.liked {
+  color: #e74c3c;
+}
+
+.friend-clip-like:hover {
+  background: rgba(255,255,255,1);
+}
