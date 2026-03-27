@@ -88,9 +88,6 @@ export default function Home() {
           </nav>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {activeTab === 'mybook' && (
-            <button className="upload-btn" onClick={() => setShowUpload(true)}>+ アップロード</button>
-          )}
           <UserMenu user={user} onLogout={handleLogout} onUserUpdated={refreshUser} />
         </div>
       </header>
