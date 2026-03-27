@@ -57,6 +57,14 @@ def resize_and_compress(image_bytes: bytes, size: int = 300) -> bytes:
     img_resized.save(output, format='JPEG', quality=75, optimize=True)
     return output.getvalue()
 
+def process_avatar_image(image_bytes: bytes) -> bytes:
+    """
+    アバター画像処理（センタークロップ → 200×200px）
+    """
+    cropped = center_crop_to_square(image_bytes)
+    processed = resize_and_compress(cropped, size=200)
+    return processed
+
 def process_image(image_bytes: bytes) -> bytes:
     """
     画像処理の完全なパイプライン

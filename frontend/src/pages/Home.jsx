@@ -7,6 +7,7 @@ import Book from '../components/book/Book'
 import TagFilter from '../components/TagFilter'
 import UploadModal from '../components/upload/UploadModal'
 import ClipDetailModal from '../components/clip/ClipDetailModal'
+import UserMenu from '../components/user/UserMenu'
 import './Home.css'
 
 export default function Home() {
@@ -46,15 +47,20 @@ export default function Home() {
     navigate('/login')
   }
 
+  const refreshUser = async () => {
+    const { data: { user: updated } } = await supabase.auth.getUser()
+    setUser(updated)
+  }
+
   if (!user) return null
 
   return (
     <div className="home">
       <header className="home-header">
         <h1 className="home-title">Scrappa</h1>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button className="upload-btn" onClick={() => setShowUpload(true)}>+ アップロード</button>
-          <button className="logout-btn" onClick={handleLogout}>ログアウト</button>
+          <UserMenu user={user} onLogout={handleLogout} onUserUpdated={refreshUser} />
         </div>
       </header>
 
