@@ -39,7 +39,7 @@ function SpreadNavigation({ current, total, onPrev, onNext }) {
   )
 }
 
-export default function Book({ clips, onClipClick, onEmptyClick }) {
+export default function Book({ clips, onClipClick, onEmptyClick, getLikeData }) {
   const [currentSpread, setCurrentSpread] = useState(0)
 
   const totalSpreads = Math.max(1, Math.ceil(clips.length / CLIPS_PER_SPREAD))
@@ -61,6 +61,7 @@ export default function Book({ clips, onClipClick, onEmptyClick }) {
           showEmptySlot={leftShowEmpty}
           onClipClick={onClipClick}
           onEmptyClick={onEmptyClick}
+          getLikeData={getLikeData}
         />
         <RingBinding />
         <Page
@@ -69,6 +70,7 @@ export default function Book({ clips, onClipClick, onEmptyClick }) {
           showEmptySlot={rightShowEmpty}
           onClipClick={onClipClick}
           onEmptyClick={onEmptyClick}
+          getLikeData={getLikeData}
         />
       </div>
       <SpreadNavigation

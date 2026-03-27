@@ -49,6 +49,13 @@ async def send_friend_request(
         "status": "pending",
     }).execute()
 
+    # フレンド申請通知を挿入
+    supabase.table("notifications").insert({
+        "user_id": body.to_user_id,
+        "type": "friend_request",
+        "from_user_id": user_id,
+    }).execute()
+
     return {"id": res.data[0]["id"]}
 
 

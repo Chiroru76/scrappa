@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import api from '../../lib/api'
+import Book from '../book/Book'
 import './FriendBookModal.css'
 
 export default function FriendBookModal({ friend, onClose }) {
@@ -12,7 +13,7 @@ export default function FriendBookModal({ friend, onClose }) {
       .finally(() => setLoading(false))
   }, [friend.id])
 
-  const toggleLike = async (clip) => {
+  const toggleLike = useCallback(async (clip) => {
     if (clip.liked) {
       await api.delete(`/clips/${clip.id}/likes`)
     } else {
@@ -23,7 +24,13 @@ export default function FriendBookModal({ friend, onClose }) {
         ? { ...c, liked: !c.liked, like_count: c.like_count + (c.liked ? -1 : 1) }
         : c
     ))
-  }
+  }, [])
+
+  const getLikeData = useCallback((clip) => ({
+    liked: clip.liked,
+    like_count: clip.like_count,
+    onToggle: toggleLike,
+  }), [toggleLike])
 
   const displayName = friend.display_name || 'ユーザー'
 
@@ -47,19 +54,7 @@ export default function FriendBookModal({ friend, onClose }) {
           ) : clips.length === 0 ? (
             <p className="friend-book-empty">クリップがありません</p>
           ) : (
-            <div className="friend-clips-grid">
-              {clips.map(clip => (
-                <div key={clip.id} className="friend-clip-card">
-                  <img src={clip.image_url} alt="" className="friend-clip-img" />
-                  <button
-                    className={`friend-clip-like ${clip.liked ? 'liked' : ''}`}
-                    onClick={() => toggleLike(clip)}
-                  >
-                    ♥ {clip.like_count}
-                  </button>
-                </div>
-              ))}
-            </div>
+            <Book clips={clips} getLikeData={getLikeData} />
           )}
         </div>
       </div>
