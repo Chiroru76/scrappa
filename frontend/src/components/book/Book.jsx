@@ -60,17 +60,22 @@ export default function Book({ clips, onClipClick, onEmptyClick, getLikeData }) 
   const leftShowEmpty  = isLastSpread && leftClips.length < CLIPS_PER_PAGE
   const rightShowEmpty = !isMobile && isLastSpread && leftClips.length === CLIPS_PER_PAGE && rightClips.length < CLIPS_PER_PAGE
 
+  // モバイル: 奇数ページ(0,2,4...)はリングが右、偶数ページ(1,3,5...)はリングが左
+  const mobileRingOnRight = isMobile && currentSpread % 2 === 0
+
   return (
     <div className="book-container">
       <div className={`notebook-spread${isMobile ? ' notebook-spread--mobile' : ''}`}>
+        {isMobile && !mobileRingOnRight && <RingBinding />}
         <Page
           clips={leftClips}
-          side={isMobile ? 'mobile' : 'left'}
+          side={isMobile ? (mobileRingOnRight ? 'left' : 'right') : 'left'}
           showEmptySlot={leftShowEmpty}
           onClipClick={onClipClick}
           onEmptyClick={onEmptyClick}
           getLikeData={getLikeData}
         />
+        {isMobile && mobileRingOnRight && <RingBinding />}
         {!isMobile && <RingBinding />}
         {!isMobile && (
           <Page
