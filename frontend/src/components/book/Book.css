@@ -105,3 +105,18 @@
   min-width: 40px;
   text-align: center;
 }
+
+/* モバイル（1ページ表示） */
+@media (max-width: 767px) {
+  .book-container {
+    padding: 16px 0;
+  }
+
+  .notebook-spread--mobile {
+    justify-content: center;
+  }
+
+  .notebook-spread--mobile .page {
+    width: min(300px, calc(100vw - 24px));
+  }
+}

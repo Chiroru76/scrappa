@@ -68,3 +68,23 @@
   color: #888;
   margin-top: 48px;
 }
+
+/* モバイル */
+@media (max-width: 767px) {
+  .home-header {
+    padding: 10px 12px;
+  }
+
+  .home-title {
+    font-size: 1.1rem;
+  }
+
+  .home-header-left {
+    gap: 12px;
+  }
+
+  .home-nav-btn {
+    padding: 5px 10px;
+    font-size: 0.82rem;
+  }
+}

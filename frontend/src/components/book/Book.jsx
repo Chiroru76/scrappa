@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Page from './Page'
+import { useIsMobile } from '../../hooks/useIsMobile'
 import './Book.css'
 
-const CLIPS_PER_SPREAD = 24
+const CLIPS_PER_PAGE = 12
 
 function RingBinding() {
   const coils = Array.from({ length: 34 })
@@ -41,37 +42,51 @@ function SpreadNavigation({ current, total, onPrev, onNext }) {
 
 export default function Book({ clips, onClipClick, onEmptyClick, getLikeData }) {
   const [currentSpread, setCurrentSpread] = useState(0)
+  const isMobile = useIsMobile()
 
-  const totalSpreads = Math.max(1, Math.ceil(clips.length / CLIPS_PER_SPREAD))
+  const clipsPerSpread = isMobile ? CLIPS_PER_PAGE : CLIPS_PER_PAGE * 2
+  const totalSpreads = Math.max(1, Math.ceil(clips.length / clipsPerSpread))
 
-  const leftClips  = clips.slice(currentSpread * CLIPS_PER_SPREAD, currentSpread * CLIPS_PER_SPREAD + 12)
-  const rightClips = clips.slice(currentSpread * CLIPS_PER_SPREAD + 12, currentSpread * CLIPS_PER_SPREAD + 24)
+  // デバイス切り替え時に範囲外にならないよう先頭に戻す
+  useEffect(() => {
+    setCurrentSpread(0)
+  }, [isMobile])
 
-  // 空スロットは最後のクリップの直後1箇所のみ表示する
+  const spreadStart = currentSpread * clipsPerSpread
+  const leftClips  = clips.slice(spreadStart, spreadStart + CLIPS_PER_PAGE)
+  const rightClips = isMobile ? [] : clips.slice(spreadStart + CLIPS_PER_PAGE, spreadStart + CLIPS_PER_PAGE * 2)
+
   const isLastSpread = currentSpread === totalSpreads - 1
-  const leftShowEmpty  = isLastSpread && leftClips.length < 12
-  const rightShowEmpty = isLastSpread && leftClips.length === 12 && rightClips.length < 12
+  const leftShowEmpty  = isLastSpread && leftClips.length < CLIPS_PER_PAGE
+  const rightShowEmpty = !isMobile && isLastSpread && leftClips.length === CLIPS_PER_PAGE && rightClips.length < CLIPS_PER_PAGE
+
+  // モバイル: 奇数ページ(0,2,4...)はリングが右、偶数ページ(1,3,5...)はリングが左
+  const mobileRingOnRight = isMobile && currentSpread % 2 === 0
 
   return (
     <div className="book-container">
-      <div className="notebook-spread">
+      <div className={`notebook-spread${isMobile ? ' notebook-spread--mobile' : ''}`}>
+        {isMobile && !mobileRingOnRight && <RingBinding />}
         <Page
           clips={leftClips}
-          side="left"
+          side={isMobile ? (mobileRingOnRight ? 'left' : 'right') : 'left'}
           showEmptySlot={leftShowEmpty}
           onClipClick={onClipClick}
           onEmptyClick={onEmptyClick}
           getLikeData={getLikeData}
         />
-        <RingBinding />
-        <Page
-          clips={rightClips}
-          side="right"
-          showEmptySlot={rightShowEmpty}
-          onClipClick={onClipClick}
-          onEmptyClick={onEmptyClick}
-          getLikeData={getLikeData}
-        />
+        {isMobile && mobileRingOnRight && <RingBinding />}
+        {!isMobile && <RingBinding />}
+        {!isMobile && (
+          <Page
+            clips={rightClips}
+            side="right"
+            showEmptySlot={rightShowEmpty}
+            onClipClick={onClipClick}
+            onEmptyClick={onEmptyClick}
+            getLikeData={getLikeData}
+          />
+        )}
       </div>
       <SpreadNavigation
         current={currentSpread}

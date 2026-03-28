@@ -30,6 +30,7 @@
   border-radius: 0 8px 8px 0;
 }
 
+
 .page-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
