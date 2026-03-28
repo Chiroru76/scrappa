@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import headerLogo from '../assets/headerlogo.png'
 import { supabase } from '../lib/supabase'
 import api from '../lib/api'
 import { useClips } from '../hooks/useClips'
@@ -74,7 +75,12 @@ export default function Home() {
     <div className="home">
       <header className="home-header">
         <div className="home-header-left">
-          <h1 className="home-title" onClick={() => setActiveTab('mybook')} style={{ cursor: 'pointer' }}>Scrappa</h1>
+          <img
+            src={headerLogo}
+            alt="Scrappa"
+            className="home-logo"
+            onClick={() => setActiveTab('mybook')}
+          />
           <nav className="home-nav">
             <button
               className={`home-nav-btn ${activeTab === 'mybook' ? 'active' : ''}`}

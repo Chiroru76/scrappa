@@ -27,9 +27,9 @@
 }
 
 .tag-btn.active {
-  background-color: #2c5f2e;
+  background-color: #4a7ab0;
   color: #fff;
-  border-color: #2c5f2e;
+  border-color: #4a7ab0;
 }
 
 .tag-count {
@@ -80,7 +80,7 @@
 }
 
 .tag-edit-input {
-  border: 1px solid #2c5f2e;
+  border: 1px solid #4a7ab0;
   border-radius: 20px;
   padding: 5px 12px;
   font-size: 0.85rem;
