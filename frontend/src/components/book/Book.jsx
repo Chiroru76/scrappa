@@ -6,7 +6,7 @@ import './Book.css'
 
 const CLIPS_PER_PAGE = 12
 
-function RingBinding() {
+export function RingBinding() {
   const coils = Array.from({ length: 34 })
   return (
     <div className="ring-binding">
@@ -17,9 +17,14 @@ function RingBinding() {
   )
 }
 
-function SpreadNavigation({ current, total, onPrev, onNext }) {
+function SpreadNavigation({ current, total, onPrev, onNext, onShowCover }) {
   return (
     <div className="spread-navigation">
+      {onShowCover && (
+        <button className="nav-cover-btn" onClick={onShowCover}>
+          表紙へ
+        </button>
+      )}
       <button
         className="nav-btn"
         onClick={onPrev}
@@ -41,7 +46,7 @@ function SpreadNavigation({ current, total, onPrev, onNext }) {
   )
 }
 
-export default function Book({ clips, onClipClick, onEmptyClick, getLikeData }) {
+export default function Book({ clips, onClipClick, onEmptyClick, getLikeData, onShowCover }) {
   const [currentSpread, setCurrentSpread] = useState(0)
   const isMobile = useIsMobile()
 
@@ -102,6 +107,7 @@ export default function Book({ clips, onClipClick, onEmptyClick, getLikeData }) 
         total={totalSpreads}
         onPrev={() => setCurrentSpread(s => s - 1)}
         onNext={() => setCurrentSpread(s => s + 1)}
+        onShowCover={onShowCover}
       />
     </div>
   )

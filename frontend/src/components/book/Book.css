@@ -99,6 +99,23 @@
   cursor: default;
 }
 
+.nav-cover-btn {
+  background: none;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #666;
+  padding: 3px 10px;
+  margin-right: 8px;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.nav-cover-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: #333;
+}
+
 .nav-indicator {
   font-size: 0.8rem;
   color: #888;
