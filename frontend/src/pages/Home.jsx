@@ -7,6 +7,7 @@ import { useClips } from '../hooks/useClips'
 import { useTags } from '../hooks/useTags'
 import { useNotifications } from '../hooks/useNotifications'
 import Book from '../components/book/Book'
+import BookCover from '../components/book/BookCover'
 import TagFilter from '../components/TagFilter'
 import UploadModal from '../components/upload/UploadModal'
 import ClipDetailModal from '../components/clip/ClipDetailModal'
@@ -119,7 +120,11 @@ export default function Home() {
         />
       )}
 
-      {activeTab === 'mybook' ? (
+      {activeTab === 'cover' ? (
+        <main className="home-main">
+          <BookCover userName={user.user_metadata?.display_name || user.user_metadata?.full_name || user.email} onOpen={() => setActiveTab('mybook')} />
+        </main>
+      ) : activeTab === 'mybook' ? (
         <>
           <TagFilter
             tags={tags}
@@ -132,7 +137,7 @@ export default function Home() {
             {clipsLoading ? (
               <p className="loading-text">読み込み中...</p>
             ) : (
-              <Book clips={clips} onClipClick={setSelectedClip} onEmptyClick={() => setShowUpload(true)} />
+              <Book clips={clips} onClipClick={setSelectedClip} onEmptyClick={() => setShowUpload(true)} onShowCover={() => setActiveTab('cover')} />
             )}
           </main>
         </>
