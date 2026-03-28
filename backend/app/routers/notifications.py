@@ -27,6 +27,16 @@ async def get_notifications(user_id: str = Depends(get_current_user)):
             .execute()
         profiles_map = {p["id"]: p for p in profiles_res.data}
 
+    # いいね通知のクリップ画像を一括取得
+    clip_ids = [n["clip_id"] for n in notifications if n["type"] == "like" and n["clip_id"]]
+    clips_map = {}
+    if clip_ids:
+        clips_res = supabase.table("clips") \
+            .select("id, image_url") \
+            .in_("id", clip_ids) \
+            .execute()
+        clips_map = {c["id"]: c["image_url"] for c in clips_res.data}
+
     result = []
     for n in notifications:
         result.append({
@@ -35,6 +45,7 @@ async def get_notifications(user_id: str = Depends(get_current_user)):
                 n["from_user_id"],
                 {"id": n["from_user_id"], "display_name": None, "avatar_url": None}
             ),
+            "clip_image_url": clips_map.get(n["clip_id"]) if n["clip_id"] else None,
         })
 
     unread_count = sum(1 for n in notifications if not n["is_read"])

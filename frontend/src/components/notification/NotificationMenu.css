@@ -120,3 +120,12 @@
   font-size: 0.74rem;
   color: #aaa;
 }
+
+.notif-clip-thumb {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  border-radius: 5px;
+  flex-shrink: 0;
+  background: #e8e4d8;
+}

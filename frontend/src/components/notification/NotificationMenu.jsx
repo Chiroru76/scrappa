@@ -57,6 +57,9 @@ export default function NotificationMenu({ notifications, unreadCount, onMarkAll
                       </span>
                       <span className="notif-time">{timeAgo(n.created_at)}</span>
                     </div>
+                    {n.type === 'like' && n.clip_image_url && (
+                      <img src={n.clip_image_url} alt="" className="notif-clip-thumb" />
+                    )}
                   </li>
                 ))}
               </ul>
