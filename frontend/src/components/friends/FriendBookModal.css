@@ -80,6 +80,49 @@
   flex: 1;
 }
 
+/* タグフィルター */
+.friend-tag-filter {
+  display: flex;
+  gap: 8px;
+  padding: 10px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  background: #2c5f2e;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+}
+
+.friend-tag-filter::-webkit-scrollbar {
+  display: none;
+}
+
+.friend-tag-btn {
+  display: flex;
+  align-items: center;
+  padding: 4px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.friend-tag-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.friend-tag-btn.active {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
 .friend-book-loading,
 .friend-book-empty {
   text-align: center;

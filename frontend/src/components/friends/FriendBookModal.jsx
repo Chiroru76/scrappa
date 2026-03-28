@@ -1,11 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import api from '../../lib/api'
 import Book from '../book/Book'
+import FriendClipDetailModal from './FriendClipDetailModal'
 import './FriendBookModal.css'
 
 export default function FriendBookModal({ friend, onClose }) {
   const [clips, setClips] = useState([])
   const [loading, setLoading] = useState(true)
+  const [selectedTag, setSelectedTag] = useState(null)
+  const [selectedClip, setSelectedClip] = useState(null)
 
   useEffect(() => {
     api.get(`/friends/${friend.id}/clips`)
@@ -32,6 +35,14 @@ export default function FriendBookModal({ friend, onClose }) {
     onToggle: toggleLike,
   }), [toggleLike])
 
+  // クリップから重複なくタグ一覧を生成
+  const friendTags = [...new Set(clips.flatMap(c => c.tags))]
+
+  // 選択タグでフィルタリング
+  const filteredClips = selectedTag
+    ? clips.filter(c => c.tags.includes(selectedTag))
+    : clips
+
   const displayName = friend.display_name || 'ユーザー'
 
   return (
@@ -48,16 +59,48 @@ export default function FriendBookModal({ friend, onClose }) {
           <button className="friend-book-close" onClick={onClose}>✕</button>
         </div>
 
+        {friendTags.length > 0 && (
+          <div className="friend-tag-filter">
+            <button
+              className={`friend-tag-btn ${selectedTag === null ? 'active' : ''}`}
+              onClick={() => setSelectedTag(null)}
+            >
+              すべて
+            </button>
+            {friendTags.map(tag => (
+              <button
+                key={tag}
+                className={`friend-tag-btn ${selectedTag === tag ? 'active' : ''}`}
+                onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className="friend-book-body">
           {loading ? (
             <p className="friend-book-loading">読み込み中...</p>
           ) : clips.length === 0 ? (
             <p className="friend-book-empty">クリップがありません</p>
           ) : (
-            <Book clips={clips} getLikeData={getLikeData} />
+            <Book
+              key={selectedTag}
+              clips={filteredClips}
+              getLikeData={getLikeData}
+              onClipClick={setSelectedClip}
+            />
           )}
         </div>
       </div>
+
+      {selectedClip && (
+        <FriendClipDetailModal
+          clip={selectedClip}
+          onClose={() => setSelectedClip(null)}
+        />
+      )}
     </div>
   )
 }
