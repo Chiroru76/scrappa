@@ -114,6 +114,8 @@
 
   .notebook-spread--mobile {
     justify-content: center;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   .notebook-spread--mobile .page {
