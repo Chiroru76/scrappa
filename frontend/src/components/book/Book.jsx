@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Page from './Page'
 import { useIsMobile } from '../../hooks/useIsMobile'
+import { useSwipe } from '../../hooks/useSwipe'
 import './Book.css'
 
 const CLIPS_PER_PAGE = 12
@@ -63,9 +64,17 @@ export default function Book({ clips, onClipClick, onEmptyClick, getLikeData }) 
   // モバイル: 奇数ページ(0,2,4...)はリングが右、偶数ページ(1,3,5...)はリングが左
   const mobileRingOnRight = isMobile && currentSpread % 2 === 0
 
+  const swipeHandlers = useSwipe({
+    onSwipeLeft:  () => setCurrentSpread(s => Math.min(s + 1, totalSpreads - 1)),
+    onSwipeRight: () => setCurrentSpread(s => Math.max(s - 1, 0)),
+  })
+
   return (
     <div className="book-container">
-      <div className={`notebook-spread${isMobile ? ' notebook-spread--mobile' : ''}`}>
+      <div
+        className={`notebook-spread${isMobile ? ' notebook-spread--mobile' : ''}`}
+        {...(isMobile ? swipeHandlers : {})}
+      >
         {isMobile && !mobileRingOnRight && <RingBinding />}
         <Page
           clips={leftClips}
