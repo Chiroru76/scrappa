@@ -12,8 +12,10 @@ COPY requirements.txt .
 # 依存関係のインストール
 RUN pip install --no-cache-dir -r requirements.txt
 
-# ソースコードはボリュームマウントで提供される
-# FastAPIサーバー起動（リロード有効）
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# ソースコードをコピー
+COPY . .
+
+# FastAPIサーバー起動（本番: --reload なし、ポートは環境変数から）
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
 
 EXPOSE 8000
