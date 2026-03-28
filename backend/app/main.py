@@ -8,12 +8,13 @@ app = FastAPI(
     description="スクラップブックWebアプリのバックエンドAPI"
 )
 
-# CORS設定（Docker環境）
+# CORS設定
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",  # ホストからのアクセス
-        "http://frontend:3000",   # Docker内部からのアクセス
+        "http://localhost:3000",              # ローカル開発
+        "http://frontend:3000",              # Docker内部
+        "https://scrappafrontend.vercel.app", # 本番
     ],
     allow_credentials=True,
     allow_methods=["*"],
