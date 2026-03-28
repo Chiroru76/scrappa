@@ -74,7 +74,7 @@ export default function Home() {
     <div className="home">
       <header className="home-header">
         <div className="home-header-left">
-          <h1 className="home-title">Scrappa</h1>
+          <h1 className="home-title" onClick={() => setActiveTab('mybook')} style={{ cursor: 'pointer' }}>Scrappa</h1>
           <nav className="home-nav">
             <button
               className={`home-nav-btn ${activeTab === 'mybook' ? 'active' : ''}`}
