@@ -4,11 +4,13 @@ import { supabase } from '../lib/supabase'
 import api from '../lib/api'
 import { useClips } from '../hooks/useClips'
 import { useTags } from '../hooks/useTags'
+import { useNotifications } from '../hooks/useNotifications'
 import Book from '../components/book/Book'
 import TagFilter from '../components/TagFilter'
 import UploadModal from '../components/upload/UploadModal'
 import ClipDetailModal from '../components/clip/ClipDetailModal'
 import UserMenu from '../components/user/UserMenu'
+import NotificationMenu from '../components/notification/NotificationMenu'
 import FriendsPage from './FriendsPage'
 import './Home.css'
 
@@ -22,6 +24,7 @@ export default function Home() {
 
   const { clips, loading: clipsLoading, refetch } = useClips(selectedTag)
   const { tags, refetch: refetchTags } = useTags()
+  const { notifications, unreadCount, markAllRead } = useNotifications()
 
   const handleTagRenamed = (oldName, newName) => {
     refetchTags()
@@ -88,6 +91,11 @@ export default function Home() {
           </nav>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <NotificationMenu
+            notifications={notifications}
+            unreadCount={unreadCount}
+            onMarkAllRead={markAllRead}
+          />
           <UserMenu user={user} onLogout={handleLogout} onUserUpdated={refreshUser} />
         </div>
       </header>

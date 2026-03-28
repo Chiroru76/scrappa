@@ -285,6 +285,19 @@ async def delete_clip(
 async def like_clip(clip_id: str, user_id: str = Depends(get_current_user)):
     """クリップにいいねする（重複は無視）"""
     supabase.table("likes").upsert({"clip_id": clip_id, "user_id": user_id}).execute()
+
+    # クリップオーナーに通知を挿入（自分自身へは通知しない）
+    clip_res = supabase.table("clips").select("user_id").eq("id", clip_id).execute()
+    if clip_res.data:
+        owner_id = clip_res.data[0]["user_id"]
+        if owner_id != user_id:
+            supabase.table("notifications").insert({
+                "user_id": owner_id,
+                "type": "like",
+                "from_user_id": user_id,
+                "clip_id": clip_id,
+            }).execute()
+
     return {"ok": True}
 
 
