@@ -67,17 +67,14 @@ export default function Book({ clips, onClipClick, onEmptyClick, getLikeData, on
     const newIndex = clips.findIndex(c => c.id === over.id)
     if (oldIndex === -1 || newIndex === -1) return
 
-    // ページをまたぐ移動は許可しない
-    if (clips[oldIndex].page !== clips[newIndex].page) return
+    // 視覚的なページをまたぐ移動は許可しない（PC: 24枚/スプレッド、SP: 12枚/ページ）
+    const visualOld = Math.floor(oldIndex / CLIPS_PER_PAGE)
+    const visualNew = Math.floor(newIndex / CLIPS_PER_PAGE)
+    if (visualOld !== visualNew) return
 
     const reordered = arrayMove(clips, oldIndex, newIndex)
-    // 同じページ内の position を再採番
-    const page = clips[oldIndex].page
-    let posCounter = 0
-    const updated = reordered.map(clip => {
-      if (clip.page === page) return { ...clip, position: posCounter++ }
-      return clip
-    })
+    // 全クリップの position を配列順で再採番
+    const updated = reordered.map((clip, i) => ({ ...clip, position: i }))
     onClipsReorder(updated)
   }
 
