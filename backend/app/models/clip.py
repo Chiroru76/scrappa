@@ -13,6 +13,7 @@ class ClipResponse(BaseModel):
     image_url: str = Field(description="S3画像URL")
     tags: List[str] = Field(description="タグ名のリスト")
     memo: Optional[str] = Field(default=None, description="メモ")
+    is_public: bool = Field(default=True, description="公開設定")
     page: int = Field(description="配置ページ番号")
     position: int = Field(description="ページ内の位置（0-11）")
     created_at: datetime = Field(description="作成日時")
@@ -21,5 +22,6 @@ class ClipUpdate(BaseModel):
     """クリップ更新リクエスト"""
     tags: Optional[List[str]] = None
     memo: Optional[str] = None
+    is_public: Optional[bool] = None
     page: Optional[int] = None
     position: Optional[int] = None

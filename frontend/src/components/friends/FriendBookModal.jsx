@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import api from '../../lib/api'
 import Book from '../book/Book'
+import BookCover from '../book/BookCover'
 import FriendClipDetailModal from './FriendClipDetailModal'
 import './FriendBookModal.css'
 
@@ -9,10 +10,15 @@ export default function FriendBookModal({ friend, onClose }) {
   const [loading, setLoading] = useState(true)
   const [selectedTag, setSelectedTag] = useState(null)
   const [selectedClip, setSelectedClip] = useState(null)
+  const [view, setView] = useState('book')
+  const [cover, setCover] = useState({})
 
   useEffect(() => {
     api.get(`/friends/${friend.id}/clips`)
-      .then(res => setClips(res.data.clips))
+      .then(res => {
+        setClips(res.data.clips)
+        setCover(res.data.cover || {})
+      })
       .finally(() => setLoading(false))
   }, [friend.id])
 
@@ -82,6 +88,15 @@ export default function FriendBookModal({ friend, onClose }) {
         <div className="friend-book-body">
           {loading ? (
             <p className="friend-book-loading">読み込み中...</p>
+          ) : view === 'cover' ? (
+            <BookCover
+              userName={cover.display_name || friend.display_name || 'ユーザー'}
+              onOpen={() => setView('book')}
+              coverColor={cover.cover_color || '#c8a882'}
+              coverTitle={cover.cover_title || null}
+              coverFont={cover.cover_font || ''}
+              readOnly
+            />
           ) : clips.length === 0 ? (
             <p className="friend-book-empty">クリップがありません</p>
           ) : (
@@ -90,6 +105,7 @@ export default function FriendBookModal({ friend, onClose }) {
               clips={filteredClips}
               getLikeData={getLikeData}
               onClipClick={setSelectedClip}
+              onShowCover={() => setView('cover')}
             />
           )}
         </div>

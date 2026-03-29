@@ -8,6 +8,7 @@ export default function ClipDetailModal({ clip, onClose, onUpdated, onDeleted })
   const [selectedTags, setSelectedTags] = useState(clip.tags ?? [])
   const [tagInput, setTagInput] = useState('')
   const [memo, setMemo] = useState(clip.memo ?? '')
+  const [isPublic, setIsPublic] = useState(clip.is_public ?? true)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState(null)
@@ -42,7 +43,7 @@ export default function ClipDetailModal({ clip, onClose, onUpdated, onDeleted })
     setSaving(true)
     setError(null)
     try {
-      await api.patch(`/clips/${clip.id}/`, { tags: selectedTags, memo: memo || null })
+      await api.patch(`/clips/${clip.id}/`, { tags: selectedTags, memo: memo || null, is_public: isPublic })
       onUpdated()
       onClose()
     } catch (err) {
@@ -115,6 +116,19 @@ export default function ClipDetailModal({ clip, onClose, onUpdated, onDeleted })
               rows={1}
               placeholder="メモを追加..."
             />
+          </div>
+          <div className="visibility-area">
+            <label className="visibility-label">公開設定</label>
+            <label className="toggle-label">
+              <input
+                type="checkbox"
+                className="toggle-input"
+                checked={isPublic}
+                onChange={e => setIsPublic(e.target.checked)}
+              />
+              <span className="toggle-slider" />
+              <span className="toggle-text">{isPublic ? '公開' : '非公開'}</span>
+            </label>
           </div>
         </div>
         <div className="modal-footer detail-footer">

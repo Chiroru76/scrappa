@@ -143,11 +143,18 @@ async def get_friend_clips(
 
     clips_res = supabase.table("clips").select("*")\
         .eq("user_id", friend_user_id)\
+        .eq("is_public", True)\
         .order("created_at", desc=False).execute()
     clips_data = clips_res.data
 
+    # フレンドのカバー設定を取得
+    profile_res = supabase.table("profiles")\
+        .select("display_name, cover_color, cover_title, cover_font")\
+        .eq("id", friend_user_id).execute()
+    profile = profile_res.data[0] if profile_res.data else {}
+
     if not clips_data:
-        return {"clips": []}
+        return {"clips": [], "cover": profile}
 
     clip_ids = [c["id"] for c in clips_data]
 
@@ -183,4 +190,4 @@ async def get_friend_clips(
             "liked": cid in liked_by_me,
         })
 
-    return {"clips": result}
+    return {"clips": result, "cover": profile}
