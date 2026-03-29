@@ -28,17 +28,28 @@ async def upload_avatar(
     return {"avatar_url": url}
 
 
+@router.get("/me", response_model=dict)
+async def get_my_profile(user_id: str = Depends(get_current_user)):
+    """自分のプロフィール（表紙設定を含む）を取得"""
+    res = supabase.table("profiles").select("*").eq("id", user_id).single().execute()
+    return res.data or {}
+
+
 @router.patch("/me", response_model=dict)
 async def update_profile(
     body: ProfileUpdate,
     user_id: str = Depends(get_current_user),
 ):
-    """profiles テーブルに表示名・アバターを同期（ユーザー検索に使用）"""
+    """profiles テーブルに表示名・アバター・表紙設定を同期"""
     upsert_data: dict = {"id": user_id}
     if body.display_name is not None:
         upsert_data["display_name"] = body.display_name
     if body.avatar_url is not None:
         upsert_data["avatar_url"] = body.avatar_url
+    if body.cover_color is not None:
+        upsert_data["cover_color"] = body.cover_color
+    if body.cover_title is not None:
+        upsert_data["cover_title"] = body.cover_title
 
     supabase.table("profiles").upsert(upsert_data).execute()
     return {"ok": True}
