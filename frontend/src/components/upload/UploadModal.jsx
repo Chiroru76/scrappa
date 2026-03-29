@@ -4,6 +4,7 @@ import Cropper from 'react-easy-crop'
 import { useTags } from '../../hooks/useTags'
 import api from '../../lib/api'
 import { getCroppedBlob } from '../../lib/cropImage'
+import snapSound from '../../assets/Staple.mp3'
 import './UploadModal.css'
 
 export default function UploadModal({ onClose, onUploaded }) {
@@ -75,8 +76,15 @@ export default function UploadModal({ onClose, onUploaded }) {
     setCroppedAreaPixels(pixels)
   }, [])
 
+  const playSnapSound = () => {
+    const audio = new Audio(snapSound)
+    audio.volume = 0.4
+    audio.play()
+  }
+
   // 「確定」ボタン → Canvas APIでクロップ済みblobを生成してプレビューへ
   const handleCropConfirm = async () => {
+    playSnapSound()
     const blob = await getCroppedBlob(imageSrc, croppedAreaPixels, rotation)
     const croppedFile = new File([blob], 'cropped.jpg', { type: 'image/jpeg' })
     setFile(croppedFile)
