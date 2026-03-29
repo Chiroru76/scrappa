@@ -177,6 +177,95 @@
   cursor: not-allowed;
 }
 
+/* 画像ラッパー（いいねボタン位置決め用） */
+.detail-image-wrap {
+  position: relative;
+}
+
+/* フレンドのクリップ詳細のいいねボタン */
+.detail-like-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  border: none;
+  border-radius: 12px;
+  padding: 4px 10px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  color: #888;
+  transition: background-color 0.1s;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.detail-like-btn:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+.detail-like-heart {
+  color: #bbb;
+  font-size: 0.95rem;
+  transition: color 0.15s;
+}
+
+.detail-like-btn.liked .detail-like-heart {
+  color: #e74c3c;
+}
+
+/* いいね数 */
+.clip-likes-count {
+  font-size: 0.85rem;
+  color: #e74c3c;
+  margin: -8px 0 0;
+  text-align: right;
+}
+
+/* メモ */
+.memo-area {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.memo-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.memo-input {
+  width: 100%;
+  font-size: 0.82rem;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px;
+  resize: vertical;
+  background: #fafaf8;
+  box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.memo-input:focus {
+  outline: none;
+  border-color: #aaa;
+}
+
+/* フレンドのクリップ詳細のメモ（読み取り専用） */
+.clip-memo-readonly {
+  font-size: 0.82rem;
+  color: #aaa;
+  margin: 0;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  text-align: center;
+}
+
 /* 削除ボタン（赤系・左寄せ） */
 .delete-btn {
   padding: 8px 20px;

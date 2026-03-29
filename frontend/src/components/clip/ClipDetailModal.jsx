@@ -7,6 +7,7 @@ import './ClipDetailModal.css'
 export default function ClipDetailModal({ clip, onClose, onUpdated, onDeleted }) {
   const [selectedTags, setSelectedTags] = useState(clip.tags ?? [])
   const [tagInput, setTagInput] = useState('')
+  const [memo, setMemo] = useState(clip.memo ?? '')
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState(null)
@@ -41,7 +42,7 @@ export default function ClipDetailModal({ clip, onClose, onUpdated, onDeleted })
     setSaving(true)
     setError(null)
     try {
-      await api.patch(`/clips/${clip.id}/`, { tags: selectedTags })
+      await api.patch(`/clips/${clip.id}/`, { tags: selectedTags, memo: memo || null })
       onUpdated()
       onClose()
     } catch (err) {
@@ -74,6 +75,9 @@ export default function ClipDetailModal({ clip, onClose, onUpdated, onDeleted })
         </div>
         <div className="modal-body">
           <img src={clip.image_url} alt="クリップ" className="detail-image" />
+          {clip.likes_count > 0 && (
+            <p className="clip-likes-count">❤️ {clip.likes_count}</p>
+          )}
 
           <div className="tag-input-area">
             <label className="tag-label">タグ</label>
@@ -101,6 +105,16 @@ export default function ClipDetailModal({ clip, onClose, onUpdated, onDeleted })
                   ))}
               </datalist>
             </div>
+          </div>
+          <div className="memo-area">
+            <label className="memo-label">メモ</label>
+            <textarea
+              className="memo-input"
+              value={memo}
+              onChange={e => setMemo(e.target.value)}
+              rows={1}
+              placeholder="メモを追加..."
+            />
           </div>
         </div>
         <div className="modal-footer detail-footer">

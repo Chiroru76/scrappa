@@ -15,6 +15,7 @@ router = APIRouter()
 async def create_clip(
     file: UploadFile = File(..., description="画像ファイル（JPEG/PNG/WebP、10MB以下）"),
     tags: Optional[str] = Form(default="[]", description="タグ名のリスト（JSON配列文字列: '[\"ロゴ\", \"モノクロ\"]'）"),
+    memo: Optional[str] = Form(default="", description="メモ（省略可）"),
     page: Optional[int] = Form(default=None, description="配置ページ番号"),
     user_id: str = Depends(get_current_user),
 ):
@@ -71,6 +72,7 @@ async def create_clip(
         "image_url": image_url,
         "page": page,
         "position": position,
+        "memo": memo or None,
     }
     response = supabase.table("clips").insert(clip_data).execute()
     clip = response.data[0]
@@ -112,6 +114,7 @@ async def create_clip(
         id=clip["id"],
         image_url=clip["image_url"],
         tags=tag_names,
+        memo=clip.get("memo"),
         page=clip["page"],
         position=clip["position"],
         created_at=clip["created_at"]
@@ -205,10 +208,20 @@ async def get_clips(
             if name:
                 clip_tags_map.setdefault(row["clip_id"], []).append(name)
 
+        # likes を一括取得してクリップごとのいいね数を集計
+        likes_res = supabase.table("likes")\
+            .select("clip_id")\
+            .in_("clip_id", clip_ids)\
+            .execute()
+        likes_count_map: dict = {}
+        for row in likes_res.data:
+            likes_count_map[row["clip_id"]] = likes_count_map.get(row["clip_id"], 0) + 1
+
         for clip in clips_data:
             clips_with_tags.append({
                 **clip,
-                "tags": clip_tags_map.get(clip["id"], [])
+                "tags": clip_tags_map.get(clip["id"], []),
+                "likes_count": likes_count_map.get(clip["id"], 0),
             })
     
     # 総件数取得
@@ -238,6 +251,10 @@ async def update_clip(
     res = supabase.table("clips").select("id").eq("id", clip_id).eq("user_id", user_id).execute()
     if not res.data:
         raise HTTPException(status_code=404, detail="Clip not found")
+
+    # メモを更新
+    if body.memo is not None:
+        supabase.table("clips").update({"memo": body.memo or None}).eq("id", clip_id).execute()
 
     # 既存タグ関連を全削除してから再挿入（全差し替え方式）
     supabase.table("clip_tags").delete().eq("clip_id", clip_id).execute()

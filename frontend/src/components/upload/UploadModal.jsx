@@ -22,6 +22,7 @@ export default function UploadModal({ onClose, onUploaded }) {
 
   const [selectedTags, setSelectedTags] = useState([])
   const [tagInput, setTagInput] = useState('')
+  const [memo, setMemo] = useState('')
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState(null)
   const inputRef = useRef(null)
@@ -107,6 +108,7 @@ export default function UploadModal({ onClose, onUploaded }) {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('tags', JSON.stringify(selectedTags))
+      formData.append('memo', memo)
       await api.post('/clips/', formData)
       onUploaded()
       onClose()
@@ -214,35 +216,47 @@ export default function UploadModal({ onClose, onUploaded }) {
             </div>
           )}
 
-          {/* タグ選択（フェーズ3のみ表示） */}
+          {/* タグ・メモ入力（フェーズ3のみ表示） */}
           {phase === 'preview' && (
-            <div className="tag-input-area">
-              <label className="tag-label">タグ</label>
-              <div className="tag-chips">
-                {selectedTags.map((tag) => (
-                  <span key={tag} className="tag-chip">
-                    {tag}
-                    <button className="tag-chip-remove" onClick={() => removeTag(tag)}>×</button>
-                  </span>
-                ))}
-                <input
-                  className="tag-input"
-                  type="text"
-                  list="tag-suggestions"
-                  value={tagInput}
-                  onChange={(e) => setTagInput(e.target.value)}
-                  onKeyDown={handleTagKeyDown}
-                  placeholder="タグを入力してEnter"
-                />
-                <datalist id="tag-suggestions">
-                  {existingTags
-                    .filter((t) => !selectedTags.includes(t.name))
-                    .map((t) => (
-                      <option key={t.id} value={t.name} />
-                    ))}
-                </datalist>
+            <>
+              <div className="tag-input-area">
+                <label className="tag-label">タグ</label>
+                <div className="tag-chips">
+                  {selectedTags.map((tag) => (
+                    <span key={tag} className="tag-chip">
+                      {tag}
+                      <button className="tag-chip-remove" onClick={() => removeTag(tag)}>×</button>
+                    </span>
+                  ))}
+                  <input
+                    className="tag-input"
+                    type="text"
+                    list="tag-suggestions"
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={handleTagKeyDown}
+                    placeholder="タグを入力してEnter"
+                  />
+                  <datalist id="tag-suggestions">
+                    {existingTags
+                      .filter((t) => !selectedTags.includes(t.name))
+                      .map((t) => (
+                        <option key={t.id} value={t.name} />
+                      ))}
+                  </datalist>
+                </div>
               </div>
-            </div>
+              <div className="memo-area">
+                <label className="memo-label">メモ</label>
+                <textarea
+                  className="memo-input"
+                  placeholder="メモを入力（任意）"
+                  value={memo}
+                  onChange={e => setMemo(e.target.value)}
+                  rows={1}
+                />
+              </div>
+            </>
           )}
         </div>
         <div className="modal-footer">
