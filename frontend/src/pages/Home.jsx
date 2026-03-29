@@ -27,7 +27,7 @@ export default function Home() {
   const [coverFont, setCoverFont] = useState('')
   const navigate = useNavigate()
 
-  const { clips, loading: clipsLoading, refetch } = useClips(selectedTag)
+  const { clips, setClips, loading: clipsLoading, refetch } = useClips(selectedTag)
   const { tags, refetch: refetchTags } = useTags()
   const { notifications, unreadCount, markAllRead } = useNotifications()
 
@@ -86,6 +86,14 @@ export default function Home() {
   const handleCoverFontChange = async (font) => {
     setCoverFont(font)
     await api.patch('/users/me', { cover_font: font }).catch(() => {})
+  }
+
+  const handleClipsReorder = async (reordered) => {
+    // 楽観的更新
+    setClips(reordered)
+    // バックグラウンドで保存（タグフィルター中は並び替え不可なので selectedTag がない場合のみ）
+    const updates = reordered.map(c => ({ id: c.id, page: c.page, position: c.position }))
+    await api.post('/clips/reorder', updates).catch(() => {})
   }
 
   const handleLogout = async () => {
@@ -174,7 +182,7 @@ export default function Home() {
             {clipsLoading ? (
               <p className="loading-text">読み込み中...</p>
             ) : (
-              <Book clips={clips} onClipClick={setSelectedClip} onEmptyClick={() => setShowUpload(true)} onShowCover={() => setActiveTab('cover')} />
+              <Book clips={clips} onClipClick={setSelectedClip} onEmptyClick={() => setShowUpload(true)} onShowCover={() => setActiveTab('cover')} onClipsReorder={handleClipsReorder} />
             )}
           </main>
         </>

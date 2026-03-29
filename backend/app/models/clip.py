@@ -25,3 +25,9 @@ class ClipUpdate(BaseModel):
     is_public: Optional[bool] = None
     page: Optional[int] = None
     position: Optional[int] = None
+
+class ClipPositionUpdate(BaseModel):
+    """並び替え用の位置更新リクエスト"""
+    id: str
+    page: int
+    position: int
