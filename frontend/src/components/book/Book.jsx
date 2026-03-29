@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { arrayMove } from '@dnd-kit/sortable'
 import Page from './Page'
 import { useIsMobile } from '../../hooks/useIsMobile'
 import { useSwipe } from '../../hooks/useSwipe'
@@ -46,9 +48,38 @@ function SpreadNavigation({ current, total, onPrev, onNext, onShowCover }) {
   )
 }
 
-export default function Book({ clips, onClipClick, onEmptyClick, getLikeData, onShowCover }) {
+export default function Book({ clips, onClipClick, onEmptyClick, getLikeData, onShowCover, onClipsReorder }) {
   const [currentSpread, setCurrentSpread] = useState(0)
   const isMobile = useIsMobile()
+
+  const sortable = !!onClipsReorder
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } })
+  )
+
+  function handleDragEnd(event) {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const oldIndex = clips.findIndex(c => c.id === active.id)
+    const newIndex = clips.findIndex(c => c.id === over.id)
+    if (oldIndex === -1 || newIndex === -1) return
+
+    // ページをまたぐ移動は許可しない
+    if (clips[oldIndex].page !== clips[newIndex].page) return
+
+    const reordered = arrayMove(clips, oldIndex, newIndex)
+    // 同じページ内の position を再採番
+    const page = clips[oldIndex].page
+    let posCounter = 0
+    const updated = reordered.map(clip => {
+      if (clip.page === page) return { ...clip, position: posCounter++ }
+      return clip
+    })
+    onClipsReorder(updated)
+  }
 
   const clipsPerSpread = isMobile ? CLIPS_PER_PAGE : CLIPS_PER_PAGE * 2
   const totalSpreads = Math.max(1, Math.ceil(clips.length / clipsPerSpread))
@@ -75,40 +106,44 @@ export default function Book({ clips, onClipClick, onEmptyClick, getLikeData, on
   })
 
   return (
-    <div className="book-container">
-      <div
-        className={`notebook-spread${isMobile ? ' notebook-spread--mobile' : ''}`}
-        {...(isMobile ? swipeHandlers : {})}
-      >
-        {isMobile && !mobileRingOnRight && <RingBinding />}
-        <Page
-          clips={leftClips}
-          side={isMobile ? (mobileRingOnRight ? 'left' : 'right') : 'left'}
-          showEmptySlot={leftShowEmpty}
-          onClipClick={onClipClick}
-          onEmptyClick={onEmptyClick}
-          getLikeData={getLikeData}
-        />
-        {isMobile && mobileRingOnRight && <RingBinding />}
-        {!isMobile && <RingBinding />}
-        {!isMobile && (
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <div className="book-container">
+        <div
+          className={`notebook-spread${isMobile ? ' notebook-spread--mobile' : ''}`}
+          {...(isMobile ? swipeHandlers : {})}
+        >
+          {isMobile && !mobileRingOnRight && <RingBinding />}
           <Page
-            clips={rightClips}
-            side="right"
-            showEmptySlot={rightShowEmpty}
+            clips={leftClips}
+            side={isMobile ? (mobileRingOnRight ? 'left' : 'right') : 'left'}
+            showEmptySlot={leftShowEmpty}
             onClipClick={onClipClick}
             onEmptyClick={onEmptyClick}
             getLikeData={getLikeData}
+            sortable={sortable}
           />
-        )}
+          {isMobile && mobileRingOnRight && <RingBinding />}
+          {!isMobile && <RingBinding />}
+          {!isMobile && (
+            <Page
+              clips={rightClips}
+              side="right"
+              showEmptySlot={rightShowEmpty}
+              onClipClick={onClipClick}
+              onEmptyClick={onEmptyClick}
+              getLikeData={getLikeData}
+              sortable={sortable}
+            />
+          )}
+        </div>
+        <SpreadNavigation
+          current={currentSpread}
+          total={totalSpreads}
+          onPrev={() => setCurrentSpread(s => s - 1)}
+          onNext={() => setCurrentSpread(s => s + 1)}
+          onShowCover={onShowCover}
+        />
       </div>
-      <SpreadNavigation
-        current={currentSpread}
-        total={totalSpreads}
-        onPrev={() => setCurrentSpread(s => s - 1)}
-        onNext={() => setCurrentSpread(s => s + 1)}
-        onShowCover={onShowCover}
-      />
-    </div>
+    </DndContext>
   )
 }

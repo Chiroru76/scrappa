@@ -25,5 +25,5 @@ export function useClips(tag = null) {
     fetchClips()
   }, [tag, revision])
 
-  return { clips, loading, error, refetch }
+  return { clips, setClips, loading, error, refetch }
 }

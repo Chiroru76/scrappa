@@ -3,7 +3,7 @@ from typing import Optional
 import uuid
 import json
 
-from app.models.clip import ClipResponse, ClipUpdate
+from app.models.clip import ClipResponse, ClipUpdate, ClipPositionUpdate
 from app.services.image import process_image
 from app.services.storage import upload_to_s3, delete_from_s3
 from app.db.supabase import supabase
@@ -280,6 +280,20 @@ async def update_clip(
             tag_names.append(tag_name)
 
     return {"id": clip_id, "tags": tag_names}
+
+
+@router.post("/reorder", response_model=dict)
+async def reorder_clips(
+    body: list[ClipPositionUpdate],
+    user_id: str = Depends(get_current_user),
+):
+    """クリップの並び順を一括更新"""
+    for item in body:
+        supabase.table("clips")\
+            .update({"page": item.page, "position": item.position})\
+            .eq("id", item.id).eq("user_id", user_id)\
+            .execute()
+    return {"ok": True}
 
 
 @router.delete("/{clip_id}/", status_code=204)
