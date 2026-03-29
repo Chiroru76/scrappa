@@ -95,9 +95,7 @@ export default function FriendBookModal({ friend, onClose }) {
               coverColor={cover.cover_color || '#c8a882'}
               coverTitle={cover.cover_title || null}
               coverFont={cover.cover_font || ''}
-              onColorChange={() => {}}
-              onTitleChange={() => {}}
-              onFontChange={() => {}}
+              readOnly
             />
           ) : clips.length === 0 ? (
             <p className="friend-book-empty">クリップがありません</p>
