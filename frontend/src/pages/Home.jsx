@@ -182,7 +182,7 @@ export default function Home() {
             {clipsLoading ? (
               <p className="loading-text">読み込み中...</p>
             ) : (
-              <Book clips={clips} onClipClick={setSelectedClip} onEmptyClick={() => setShowUpload(true)} onShowCover={() => setActiveTab('cover')} onClipsReorder={selectedTag ? undefined : handleClipsReorder} />
+              <Book clips={clips} onClipClick={setSelectedClip} onEmptyClick={() => setShowUpload(true)} onShowCover={() => setActiveTab('cover')} onClipsReorder={handleClipsReorder} />
             )}
           </main>
         </>

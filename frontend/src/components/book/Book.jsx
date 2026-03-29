@@ -73,8 +73,13 @@ export default function Book({ clips, onClipClick, onEmptyClick, getLikeData, on
     if (visualOld !== visualNew) return
 
     const reordered = arrayMove(clips, oldIndex, newIndex)
-    // 全クリップの position を配列順で再採番
-    const updated = reordered.map((clip, i) => ({ ...clip, position: i }))
+    // 元の page/position 値を順番通りに割り当て直す（他クリップの位置を壊さない）
+    const originalSlots = clips.map(c => ({ page: c.page, position: c.position }))
+    const updated = reordered.map((clip, i) => ({
+      ...clip,
+      page: originalSlots[i].page,
+      position: originalSlots[i].position,
+    }))
     onClipsReorder(updated)
   }
 
