@@ -99,6 +99,7 @@ export default function FriendBookModal({ friend, onClose }) {
         <FriendClipDetailModal
           clip={selectedClip}
           onClose={() => setSelectedClip(null)}
+          onToggleLike={toggleLike}
         />
       )}
     </div>

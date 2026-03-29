@@ -268,3 +268,36 @@
 .crop-confirm-btn:hover {
   background-color: #24512a;
 }
+
+/* メモ入力 */
+.memo-area {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.memo-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.memo-input {
+  width: 100%;
+  font-size: 0.82rem;
+  color: #666;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 8px;
+  resize: vertical;
+  background: #fafaf8;
+  box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.memo-input:focus {
+  outline: none;
+  border-color: #aaa;
+}
