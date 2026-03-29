@@ -16,6 +16,7 @@ async def create_clip(
     file: UploadFile = File(..., description="画像ファイル（JPEG/PNG/WebP、10MB以下）"),
     tags: Optional[str] = Form(default="[]", description="タグ名のリスト（JSON配列文字列: '[\"ロゴ\", \"モノクロ\"]'）"),
     memo: Optional[str] = Form(default="", description="メモ（省略可）"),
+    is_public: Optional[str] = Form(default="true", description="公開設定（true/false）"),
     page: Optional[int] = Form(default=None, description="配置ページ番号"),
     user_id: str = Depends(get_current_user),
 ):
@@ -66,6 +67,7 @@ async def create_clip(
     position = (response.data[0]["position"] + 1) if response.data else 0
     
     # clipsテーブルに挿入
+    is_public_bool = (is_public or "true").lower() == "true"
     clip_data = {
         "id": clip_id,
         "user_id": user_id,
@@ -73,6 +75,7 @@ async def create_clip(
         "page": page,
         "position": position,
         "memo": memo or None,
+        "is_public": is_public_bool,
     }
     response = supabase.table("clips").insert(clip_data).execute()
     clip = response.data[0]
@@ -115,6 +118,7 @@ async def create_clip(
         image_url=clip["image_url"],
         tags=tag_names,
         memo=clip.get("memo"),
+        is_public=clip.get("is_public", True),
         page=clip["page"],
         position=clip["position"],
         created_at=clip["created_at"]
@@ -252,9 +256,14 @@ async def update_clip(
     if not res.data:
         raise HTTPException(status_code=404, detail="Clip not found")
 
-    # メモを更新
+    # メモ・公開設定を更新
+    update_fields: dict = {}
     if body.memo is not None:
-        supabase.table("clips").update({"memo": body.memo or None}).eq("id", clip_id).execute()
+        update_fields["memo"] = body.memo or None
+    if body.is_public is not None:
+        update_fields["is_public"] = body.is_public
+    if update_fields:
+        supabase.table("clips").update(update_fields).eq("id", clip_id).execute()
 
     # 既存タグ関連を全削除してから再挿入（全差し替え方式）
     supabase.table("clip_tags").delete().eq("clip_id", clip_id).execute()

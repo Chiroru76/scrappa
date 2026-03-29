@@ -24,6 +24,7 @@ export default function UploadModal({ onClose, onUploaded }) {
   const [selectedTags, setSelectedTags] = useState([])
   const [tagInput, setTagInput] = useState('')
   const [memo, setMemo] = useState('')
+  const [isPublic, setIsPublic] = useState(true)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState(null)
   const inputRef = useRef(null)
@@ -117,6 +118,7 @@ export default function UploadModal({ onClose, onUploaded }) {
       formData.append('file', file)
       formData.append('tags', JSON.stringify(selectedTags))
       formData.append('memo', memo)
+      formData.append('is_public', isPublic ? 'true' : 'false')
       await api.post('/clips/', formData)
       onUploaded()
       onClose()
@@ -263,6 +265,19 @@ export default function UploadModal({ onClose, onUploaded }) {
                   onChange={e => setMemo(e.target.value)}
                   rows={1}
                 />
+              </div>
+              <div className="visibility-area">
+                <label className="visibility-label">公開設定</label>
+                <label className="toggle-label">
+                  <input
+                    type="checkbox"
+                    className="toggle-input"
+                    checked={isPublic}
+                    onChange={e => setIsPublic(e.target.checked)}
+                  />
+                  <span className="toggle-slider" />
+                  <span className="toggle-text">{isPublic ? '公開' : '非公開'}</span>
+                </label>
               </div>
             </>
           )}

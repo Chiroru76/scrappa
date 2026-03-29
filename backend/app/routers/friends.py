@@ -143,6 +143,7 @@ async def get_friend_clips(
 
     clips_res = supabase.table("clips").select("*")\
         .eq("user_id", friend_user_id)\
+        .eq("is_public", True)\
         .order("created_at", desc=False).execute()
     clips_data = clips_res.data
 
