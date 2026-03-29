@@ -15,3 +15,4 @@ class ProfileUpdate(BaseModel):
     avatar_url: Optional[str] = None
     cover_color: Optional[str] = None
     cover_title: Optional[str] = None
+    cover_font: Optional[str] = None

@@ -50,6 +50,8 @@ async def update_profile(
         upsert_data["cover_color"] = body.cover_color
     if body.cover_title is not None:
         upsert_data["cover_title"] = body.cover_title
+    if body.cover_font is not None:
+        upsert_data["cover_font"] = body.cover_font
 
     supabase.table("profiles").upsert(upsert_data).execute()
     return {"ok": True}

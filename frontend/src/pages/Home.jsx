@@ -24,6 +24,7 @@ export default function Home() {
   const [selectedClip, setSelectedClip] = useState(null)
   const [coverColor, setCoverColor] = useState('#c8a882')
   const [coverTitle, setCoverTitle] = useState(null)
+  const [coverFont, setCoverFont] = useState('')
   const navigate = useNavigate()
 
   const { clips, loading: clipsLoading, refetch } = useClips(selectedTag)
@@ -68,6 +69,7 @@ export default function Home() {
     api.get('/users/me').then(({ data }) => {
       if (data?.cover_color) setCoverColor(data.cover_color)
       if (data?.cover_title) setCoverTitle(data.cover_title)
+      if (data?.cover_font) setCoverFont(data.cover_font)
     }).catch(() => {})
   }, [user])
 
@@ -79,6 +81,11 @@ export default function Home() {
   const handleCoverTitleChange = async (title) => {
     setCoverTitle(title)
     await api.patch('/users/me', { cover_title: title }).catch(() => {})
+  }
+
+  const handleCoverFontChange = async (font) => {
+    setCoverFont(font)
+    await api.patch('/users/me', { cover_font: font }).catch(() => {})
   }
 
   const handleLogout = async () => {
@@ -148,8 +155,10 @@ export default function Home() {
             onOpen={() => setActiveTab('mybook')}
             coverColor={coverColor}
             coverTitle={coverTitle}
+            coverFont={coverFont}
             onColorChange={handleCoverColorChange}
             onTitleChange={handleCoverTitleChange}
+            onFontChange={handleCoverFontChange}
           />
         </main>
       ) : activeTab === 'mybook' ? (
