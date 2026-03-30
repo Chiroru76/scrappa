@@ -14,5 +14,9 @@ export default function AuthCallback() {
     })
   }, [navigate])
 
-  return <LoadingScreen />
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f0e8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <LoadingScreen />
+    </div>
+  )
 }
