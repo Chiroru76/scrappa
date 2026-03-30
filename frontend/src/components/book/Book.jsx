@@ -8,6 +8,9 @@ import './Book.css'
 
 const CLIPS_PER_PAGE = 12
 
+const MOBILE_BG_RIGHT = 'https://scrappa-images.s3.ap-northeast-1.amazonaws.com/images/single_notebook_right.png'
+const MOBILE_BG_LEFT  = 'https://scrappa-images.s3.ap-northeast-1.amazonaws.com/images/single_notebook_left.png'
+
 export function RingBinding() {
   const coils = Array.from({ length: 34 })
   return (
@@ -111,8 +114,14 @@ export default function Book({ clips, onClipClick, onEmptyClick, getLikeData, on
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <div className="book-container">
         <div
-          className={`notebook-spread${isMobile ? ' notebook-spread--mobile' : ''}`}
+          className={`notebook-spread${isMobile ? ` notebook-spread--mobile notebook-spread--mobile-${mobileRingOnRight ? 'right' : 'left'}` : ''}`}
           {...(isMobile ? swipeHandlers : {})}
+          style={isMobile ? {
+            backgroundImage: `url('${mobileRingOnRight ? MOBILE_BG_RIGHT : MOBILE_BG_LEFT}')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          } : undefined}
         >
           {isMobile && !mobileRingOnRight && <RingBinding />}
           <Page

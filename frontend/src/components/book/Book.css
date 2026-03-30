@@ -41,18 +41,6 @@
   display: none;
 }
 
-/* コイル製本 */
-.ring-binding {
-  width: 32px;
-  background: linear-gradient(to right, #bab8b4 0%, #dedad4 35%, #edeae4 50%, #dedad4 65%, #bab8b4 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-  padding: 10px 0;
-  z-index: 1;
-  position: relative;
-}
 
 /* コイルひとつ = 正面から見た螺旋の輪の断面 */
 .coil {
@@ -162,9 +150,30 @@
     justify-content: center;
     user-select: none;
     -webkit-user-drag: none;
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.15));
+    border-radius: 4px 8px 8px 4px;
   }
 
+  /* CSS リングをレイアウトから除外（画像のリングを使用） */
+  .notebook-spread--mobile .ring-binding {
+    display: none;
+  }
+
+  /* ページ背景を透明にして背景画像を見せる */
   .notebook-spread--mobile .page {
-    width: min(300px, calc(100vw - 24px));
+    width: min(400px, calc(100vw - 8px));
+    height: min(560px, calc((100vw - 8px) * 1.4));
+    background: transparent;
+  }
+
+  /* クリップを小さく・リング側に余白を確保 */
+  .notebook-spread--mobile-right .page-grid {
+    padding: 80px 80px 80px 50px;
+    gap: 8px;
+  }
+
+  .notebook-spread--mobile-left .page-grid {
+    padding: 90px 50px 80px 80px;
+    gap: 8px;
   }
 }

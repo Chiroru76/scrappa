@@ -11,8 +11,18 @@
 .loading-book {
   display: flex;
   align-items: stretch;
+  gap: 0;
   height: 400px;
   filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.18));
+}
+
+/* ─── リング画像 ─── */
+.loading-ring {
+  height: 100%;
+  width: auto;
+  display: block;
+  flex-shrink: 0;
+  margin-right: -50px;
 }
 
 /* ─── ページ群のラッパー ─── */
