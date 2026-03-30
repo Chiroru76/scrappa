@@ -116,14 +116,16 @@
   text-align: center;
   margin: 0 0 12px;
   color: #4a3728;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .lp-section-sub {
   text-align: center;
   color: #6b5344;
-  line-height: 1.8;
+  line-height: 1.55;
   margin: 0 0 40px;
   font-size: 0.95rem;
+  padding-bottom: 16px;
 }
 
 /* ─── Concept ─── */
@@ -192,9 +194,9 @@
 }
 
 .lp-concept-plus {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #c8a882;
+  font-size: 5rem;
+  font-weight: 600;
+  color: #585857;
   flex-shrink: 0;
 }
 
@@ -343,6 +345,11 @@
 
   .lp-section {
     padding: 48px 20px;
+  }
+
+  .lp-section-title {
+    font-size: 1.1rem;
+    white-space: nowrap;
   }
 
   .lp-concept-grid {

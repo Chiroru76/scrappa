@@ -44,7 +44,8 @@ export default function LandingPage() {
             <p className="lp-catchcopy">切り取って、集めて、私になる。</p>
             <p className="lp-desc">
               日常の一部を切り取り、それらを一冊の
-              <br />ノートに収集していくデジタルスクラップブック
+              <br />
+              ノートに収集していくデジタルスクラップブック
             </p>
             <button className="lp-google-btn" onClick={handleGoogleLogin}>
               <GoogleIcon />
@@ -60,9 +61,13 @@ export default function LandingPage() {
           アナログの温かさ × デジタルの便利さ
         </h2>
         <p className="lp-section-sub">
-          かつて雑誌やチラシの切り抜きをノートに貼って収集していたように、
+          かつて雑誌やチラシの切り抜きを
           <br />
-          スマホで撮った日常の写真を切り取り、一冊のノートに収集していく。
+          ノートに貼って収集していたように、
+          <br />
+          スマホで撮った日常の写真を切り取り、
+          <br />
+          一冊のノートに収集していく。
         </p>
         <div className="lp-concept-grid">
           <div className="lp-concept-card">
