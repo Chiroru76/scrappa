@@ -110,7 +110,7 @@ export default function Home() {
             src={headerLogo}
             alt="Scrappa"
             className="home-logo"
-            onClick={() => setActiveTab('mybook')}
+            onClick={() => window.location.reload()}
           />
           <nav className="home-nav">
             <button
