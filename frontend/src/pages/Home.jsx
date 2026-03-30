@@ -7,6 +7,7 @@ import { useClips } from '../hooks/useClips'
 import { useTags } from '../hooks/useTags'
 import { useNotifications } from '../hooks/useNotifications'
 import Book from '../components/book/Book'
+import LoadingScreen from '../components/LoadingScreen'
 import BookCover from '../components/book/BookCover'
 import TagFilter from '../components/TagFilter'
 import UploadModal from '../components/upload/UploadModal'
@@ -180,7 +181,7 @@ export default function Home() {
           />
           <main className="home-main">
             {clipsLoading ? (
-              <p className="loading-text">読み込み中...</p>
+              <LoadingScreen />
             ) : (
               <Book clips={clips} onClipClick={setSelectedClip} onEmptyClick={() => setShowUpload(true)} onShowCover={() => setActiveTab('cover')} onClipsReorder={handleClipsReorder} />
             )}

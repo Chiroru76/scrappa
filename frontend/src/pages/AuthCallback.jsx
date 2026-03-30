@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import LoadingScreen from '../components/LoadingScreen'
 
 export default function AuthCallback() {
   const navigate = useNavigate()
@@ -13,9 +14,5 @@ export default function AuthCallback() {
     })
   }, [navigate])
 
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-      <p>ログイン中...</p>
-    </div>
-  )
+  return <LoadingScreen />
 }
