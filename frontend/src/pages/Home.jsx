@@ -46,7 +46,7 @@ export default function Home() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
-        navigate('/login')
+        navigate('/')
       } else {
         setUser(session.user)
       }
