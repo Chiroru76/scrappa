@@ -7,28 +7,46 @@
 }
 
 .cover-spread {
-  display: flex;
+  position: relative;
+  width: 420px;
+  height: 480px;
   filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.2));
+  background-image: url('https://scrappa-images.s3.ap-northeast-1.amazonaws.com/images/ringnotebook-title.png');
+  background-size: cover;
+  background-position: left center;
+  background-repeat: no-repeat;
+  border-radius: 4px 8px 8px 4px;
+}
+
+.cover-spread .ring-binding {
+  display: none;
+}
+
+.cover-spread .coil {
+  display: none;
 }
 
 .cover-page {
-  width: 300px;
-  height: 480px;
-  border-radius: 0 8px 8px 0;
+  position: absolute;
+  left: 78px;
+  top: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  transition: background-color 0.3s;
+  background: transparent !important;
   box-sizing: border-box;
+  border-radius: 0 8px 8px 0;
 }
 
 .cover-title {
   margin: 0 0 24px;
   font-size: 1.2rem;
   font-weight: 700;
-  color: #4a3728;
+  color: #333;
   text-align: center;
   line-height: 1.6;
   word-break: break-all;
