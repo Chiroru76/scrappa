@@ -114,9 +114,11 @@
   font-size: 1.4rem;
   font-weight: 700;
   text-align: center;
-  margin: 0 0 12px;
+  margin: 0 auto 12px;
   color: #4a3728;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  width: fit-content;
+  padding-bottom: 4px;
 }
 
 .lp-section-sub {
