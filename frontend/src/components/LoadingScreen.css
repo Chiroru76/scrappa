@@ -3,7 +3,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 24px; /* book-container と同じ padding */
+  justify-content: center;
+  width: 100%;
+  padding-top: 70px; /* book-container と同じ padding */
+  padding-right: 60px;
   gap: 16px;
 }
 
@@ -14,6 +17,7 @@
   gap: 0;
   height: 400px;
   filter: drop-shadow(0 6px 24px rgba(0, 0, 0, 0.18));
+  margin: 0 auto;
 }
 
 /* ─── リング画像 ─── */

@@ -99,3 +99,9 @@
   padding: 0 4px;
   line-height: 1;
 }
+
+@media (max-width: 767px) {
+  .tag-filter {
+    padding: 6px 12px;
+  }
+}
