@@ -11,21 +11,16 @@ const COVER_FONTS = [
   { label: '筆記体',     value: 'Yuji Syuku' },
 ]
 
-export default function BookCover({ userName, onOpen, coverColor, coverTitle, coverFont, onColorChange, onTitleChange, onFontChange, readOnly = false }) {
+export default function BookCover({ userName, onOpen, coverTitle, coverFont, onTitleChange, onFontChange, readOnly = false }) {
   const defaultTitle = `${userName}のスクラップブック`
   const displayTitle = coverTitle || defaultTitle
 
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [editTitle, setEditTitle] = useState(displayTitle)
-  const [localColor, setLocalColor] = useState(coverColor || '#c8a882')
 
   useEffect(() => {
     setEditTitle(coverTitle || defaultTitle)
   }, [coverTitle, userName])
-
-  useEffect(() => {
-    setLocalColor(coverColor || '#c8a882')
-  }, [coverColor])
 
   function handleTitleSave() {
     setIsEditingTitle(false)
@@ -41,7 +36,7 @@ export default function BookCover({ userName, onOpen, coverColor, coverTitle, co
     <div className="cover-container">
       <div className="cover-spread">
         <RingBinding />
-        <div className="cover-page" style={{ background: localColor }}>
+        <div className="cover-page">
           {!readOnly && isEditingTitle ? (
             <input
               className="cover-title-input"
@@ -66,32 +61,20 @@ export default function BookCover({ userName, onOpen, coverColor, coverTitle, co
         </div>
       </div>
 
-      {!readOnly && (
+      {!readOnly && isEditingTitle && (
         <div className="cover-actions">
-          <label className="cover-color-btn">
-            表紙のカラーを選択
-            <input
-              type="color"
-              className="cover-color-input"
-              value={localColor}
-              onChange={e => setLocalColor(e.target.value)}
-              onBlur={e => onColorChange(e.target.value)}
-            />
-          </label>
-          {isEditingTitle && (
-            <div className="font-picker">
-              {COVER_FONTS.map(({ label, value }) => (
-                <button
-                  key={label}
-                  className={`font-option ${(coverFont || '') === value ? 'selected' : ''}`}
-                  style={{ fontFamily: value || 'inherit' }}
-                  onClick={() => onFontChange(value)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="font-picker">
+            {COVER_FONTS.map(({ label, value }) => (
+              <button
+                key={label}
+                className={`font-option ${(coverFont || '') === value ? 'selected' : ''}`}
+                style={{ fontFamily: value || 'inherit' }}
+                onClick={() => onFontChange(value)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
     </div>

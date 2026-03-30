@@ -35,7 +35,6 @@ export default function LandingPage() {
 
   return (
     <div className="lp">
-
       {/* ── Hero ── */}
       <section className="lp-hero">
         <div className="lp-notebook-cover">
@@ -43,7 +42,10 @@ export default function LandingPage() {
           <div className="lp-cover-content">
             <img src={headerLogo} alt="Scrappa" className="lp-logo" />
             <p className="lp-catchcopy">切り取って、集めて、私になる。</p>
-            <p className="lp-desc">日常の一部を切り取り、それらを一冊のノートに収集していくデジタルスクラップブック</p>
+            <p className="lp-desc">
+              日常の一部を切り取り、それらを一冊の
+              <br />ノートに収集していくデジタルスクラップブック
+            </p>
             <button className="lp-google-btn" onClick={handleGoogleLogin}>
               <GoogleIcon />
               Google でログイン
@@ -54,9 +56,12 @@ export default function LandingPage() {
 
       {/* ── Concept ── */}
       <section className="lp-section lp-concept">
-        <h2 className="lp-section-title">アナログの温かさ × デジタルの便利さ</h2>
+        <h2 className="lp-section-title">
+          アナログの温かさ × デジタルの便利さ
+        </h2>
         <p className="lp-section-sub">
-          かつて雑誌やチラシの切り抜きをノートに貼って収集していたように、<br />
+          かつて雑誌やチラシの切り抜きをノートに貼って収集していたように、
+          <br />
           スマホで撮った日常の写真を切り取り、一冊のノートに収集していく。
         </p>
         <div className="lp-concept-grid">
@@ -129,7 +134,9 @@ export default function LandingPage() {
             <div className="lp-step-num">1</div>
             <div className="lp-step-body">
               <h3>気になるものを撮る</h3>
-              <p>日常生活の中で目に入ったお菓子のパッケージ、カフェのインテリア、気になるロゴ。なんでもOK。</p>
+              <p>
+                日常生活の中で目に入ったお菓子のパッケージ、カフェのインテリア、気になるロゴ。なんでもOK。
+              </p>
             </div>
           </div>
           <div className="lp-step-arrow">↓</div>
@@ -145,7 +152,9 @@ export default function LandingPage() {
             <div className="lp-step-num">3</div>
             <div className="lp-step-body">
               <h3>スクラップブックに保存</h3>
-              <p>自分だけのスクラップブックに収集したクリップが蓄積されていく。整理は不要。</p>
+              <p>
+                自分だけのスクラップブックに収集したクリップが蓄積されていく。整理は不要。
+              </p>
             </div>
           </div>
           <div className="lp-step-arrow">↓</div>
@@ -153,7 +162,9 @@ export default function LandingPage() {
             <div className="lp-step-num">4</div>
             <div className="lp-step-body">
               <h3>見返して、自分を見つける</h3>
-              <p>ふと見返したとき、集めたものから自分の感性や好きが見えてくる。</p>
+              <p>
+                ふと見返したとき、集めたものから自分の感性や好きが見えてくる。
+              </p>
             </div>
           </div>
         </div>
@@ -172,5 +183,5 @@ export default function LandingPage() {
         <p>© 2026 Scrappa</p>
       </footer>
     </div>
-  )
+  );
 }

@@ -23,7 +23,6 @@ export default function Home() {
   const [selectedTag, setSelectedTag] = useState(null)
   const [showUpload, setShowUpload] = useState(false)
   const [selectedClip, setSelectedClip] = useState(null)
-  const [coverColor, setCoverColor] = useState('#c8a882')
   const [coverTitle, setCoverTitle] = useState(null)
   const [coverFont, setCoverFont] = useState('')
   const navigate = useNavigate()
@@ -68,16 +67,10 @@ export default function Home() {
   useEffect(() => {
     if (!user) return
     api.get('/users/me').then(({ data }) => {
-      if (data?.cover_color) setCoverColor(data.cover_color)
       if (data?.cover_title) setCoverTitle(data.cover_title)
       if (data?.cover_font) setCoverFont(data.cover_font)
     }).catch(() => {})
   }, [user])
-
-  const handleCoverColorChange = async (color) => {
-    setCoverColor(color)
-    await api.patch('/users/me', { cover_color: color }).catch(() => {})
-  }
 
   const handleCoverTitleChange = async (title) => {
     setCoverTitle(title)
@@ -162,10 +155,8 @@ export default function Home() {
           <BookCover
             userName={user.user_metadata?.display_name || user.user_metadata?.full_name || user.email}
             onOpen={() => setActiveTab('mybook')}
-            coverColor={coverColor}
             coverTitle={coverTitle}
             coverFont={coverFont}
-            onColorChange={handleCoverColorChange}
             onTitleChange={handleCoverTitleChange}
             onFontChange={handleCoverFontChange}
           />

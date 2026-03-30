@@ -1,14 +1,13 @@
-import { RingBinding } from './book/Book'
-import './book/Book.css'
 import './LoadingScreen.css'
 
 const TEXT = 'ローディング中'
+const RING_IMAGE = 'https://scrappa-images.s3.ap-northeast-1.amazonaws.com/images/notering.png'
 
 export default function LoadingScreen() {
   return (
     <div className="loading-screen">
       <div className="loading-book">
-        <RingBinding />
+        <img src={RING_IMAGE} alt="" className="loading-ring" />
         <div className="loading-pages">
           <div className="loading-page page-1" />
           <div className="loading-page page-2" />
