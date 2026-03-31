@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import headerLogo from '../assets/headerlogo.png'
+import headerLogoClear from '../assets/headerLogo_clear.png'
 import { RingBinding } from '../components/book/Book'
 import '../components/book/Book.css'
 import './LandingPage.css'
@@ -40,17 +40,17 @@ export default function LandingPage() {
         <div className="lp-notebook-cover">
           <RingBinding />
           <div className="lp-cover-content">
-            <img src={headerLogo} alt="Scrappa" className="lp-logo" />
+            <img src={headerLogoClear} alt="Scrappa" className="lp-logo" />
             <p className="lp-catchcopy">切り取って、集めて、私になる。</p>
             <p className="lp-desc">
               日常の一部を切り取り、それらを一冊の
               <br />
               ノートに収集していくデジタルスクラップブック
             </p>
-            <button className="lp-google-btn" onClick={handleGoogleLogin}>
+            {/* ── <button className="lp-google-btn" onClick={handleGoogleLogin}>
               <GoogleIcon />
-              Google でログイン
-            </button>
+              Google ログイン
+            </button> ── */}
           </div>
         </div>
       </section>
@@ -180,7 +180,7 @@ export default function LandingPage() {
         <p className="lp-cta-copy">自分だけのスクラップブックを作ろう</p>
         <button className="lp-google-btn" onClick={handleGoogleLogin}>
           <GoogleIcon />
-          Google でログイン
+          Google ログイン
         </button>
       </section>
 
