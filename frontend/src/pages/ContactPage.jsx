@@ -19,7 +19,8 @@ export default function ContactPage() {
       await api.post('/contact', form)
       setStatus('success')
       setForm({ name: '', email: '', subject: '', body: '' })
-    } catch {
+    } catch (err) {
+      console.error('Contact submit error:', err?.response?.status, err?.response?.data, err?.message)
       setStatus('error')
     }
   }
