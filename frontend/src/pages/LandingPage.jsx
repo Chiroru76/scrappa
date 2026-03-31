@@ -47,10 +47,10 @@ export default function LandingPage() {
               <br />
               ノートに収集していくデジタルスクラップブック
             </p>
-            {/* ── <button className="lp-google-btn" onClick={handleGoogleLogin}>
+            <button className="lp-google-btn" onClick={handleGoogleLogin}>
               <GoogleIcon />
               Google ログイン
-            </button> ── */}
+            </button>
           </div>
         </div>
       </section>
