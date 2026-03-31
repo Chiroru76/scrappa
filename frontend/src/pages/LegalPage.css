@@ -33,6 +33,7 @@
   width: 100%;
   margin: 0 auto;
   padding: 48px 24px 80px;
+  text-align: left;
 }
 
 .legal-content h1 {
@@ -64,8 +65,19 @@
 }
 
 .legal-content ul {
-  padding-left: 20px;
+  padding-left: 0;
   margin: 0 0 8px;
+  text-align: left;
+  list-style: none;
+}
+
+.legal-content li {
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+
+.legal-content li::before {
+  content: "・";
 }
 
 /* ─── お問い合わせフォーム ─── */

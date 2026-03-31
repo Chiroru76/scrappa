@@ -326,11 +326,12 @@
 
 /* ─── Footer ─── */
 .lp-footer {
-  background: #2c5f2e;
-  color: rgba(255, 255, 255, 0.7);
+  background: #f5f0e8;
+  color: rgba(74, 55, 40, 0.6);
   text-align: center;
   padding: 24px 16px;
   font-size: 0.8rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .lp-footer-links {
@@ -341,13 +342,13 @@
 }
 
 .lp-footer-links a {
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(74, 55, 40, 0.7);
   text-decoration: none;
   transition: color 0.15s;
 }
 
 .lp-footer-links a:hover {
-  color: #fff;
+  color: #4a3728;
   text-decoration: underline;
 }
 

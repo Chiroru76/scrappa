@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import headerLogo from '../assets/headerlogo.png'
+import headerLogo from '../assets/headerLogo_clear.png'
 import { supabase } from '../lib/supabase'
 import api from '../lib/api'
 import { useClips } from '../hooks/useClips'
