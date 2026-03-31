@@ -1,12 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from app.models.contact import ContactCreate
-from app.db.supabase import get_supabase_client
+from app.db.supabase import supabase
 
 router = APIRouter()
 
 @router.post("", status_code=201)
 async def create_contact(payload: ContactCreate):
-    supabase = get_supabase_client()
     result = supabase.table("contact_messages").insert({
         "name": payload.name,
         "email": payload.email,
