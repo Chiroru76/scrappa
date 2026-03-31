@@ -3,12 +3,40 @@ import { RingBinding } from './Book'
 import './Book.css'
 import './BookCover.css'
 
-const COVER_FONTS = [
-  { label: 'ゴシック',   value: '' },
-  { label: '明朝体',     value: 'Shippori Mincho' },
-  { label: '丸ゴシック', value: 'M PLUS Rounded 1c' },
-  { label: 'クレー体',   value: 'Klee One' },
-  { label: '筆記体',     value: 'Yuji Syuku' },
+const FONT_TABS = [
+  {
+    label: 'ゴシック',
+    fonts: [
+      { label: 'ゴシック',        value: '' },
+      { label: 'Noto Sans',       value: 'Noto Sans JP' },
+      { label: 'BIZ UD',          value: 'BIZ UDGothic' },
+      { label: '丸ゴシック',      value: 'Zen Maru Gothic' },
+    ],
+  },
+  {
+    label: '明朝',
+    fonts: [
+      { label: '明朝体',          value: 'Shippori Mincho' },
+      { label: 'Noto Serif',      value: 'Noto Serif JP' },
+      { label: 'BIZ UD明朝',     value: 'BIZ UDMincho' },
+    ],
+  },
+  {
+    label: '手書き',
+    fonts: [
+      { label: 'クレー体',        value: 'Klee One' },
+      { label: '筆記体',          value: 'Yuji Syuku' },
+      { label: '紅葉',            value: 'Zen Kurenaido' },
+    ],
+  },
+  {
+    label: 'ポップ',
+    fonts: [
+      { label: '丸ゴシック',      value: 'M PLUS Rounded 1c' },
+      { label: 'はちまるポップ',  value: 'Hachi Maru Pop' },
+      { label: 'レゲエ',          value: 'Reggae One' },
+    ],
+  },
 ]
 
 export default function BookCover({ userName, onOpen, coverTitle, coverFont, onTitleChange, onFontChange, readOnly = false }) {
@@ -17,6 +45,11 @@ export default function BookCover({ userName, onOpen, coverTitle, coverFont, onT
 
   const [isEditingTitle, setIsEditingTitle] = useState(false)
   const [editTitle, setEditTitle] = useState(displayTitle)
+  const [activeTab, setActiveTab] = useState(() => {
+    if (!coverFont) return 0
+    const idx = FONT_TABS.findIndex(tab => tab.fonts.some(f => f.value === coverFont))
+    return idx === -1 ? 0 : idx
+  })
 
   useEffect(() => {
     setEditTitle(coverTitle || defaultTitle)
@@ -63,8 +96,19 @@ export default function BookCover({ userName, onOpen, coverTitle, coverFont, onT
 
       {!readOnly && isEditingTitle && (
         <div className="cover-actions">
+          <div className="font-tabs">
+            {FONT_TABS.map((tab, i) => (
+              <button
+                key={tab.label}
+                className={`font-tab ${activeTab === i ? 'active' : ''}`}
+                onClick={() => setActiveTab(i)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
           <div className="font-picker">
-            {COVER_FONTS.map(({ label, value }) => (
+            {FONT_TABS[activeTab].fonts.map(({ label, value }) => (
               <button
                 key={label}
                 className={`font-option ${(coverFont || '') === value ? 'selected' : ''}`}
