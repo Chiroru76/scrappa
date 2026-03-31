@@ -41,16 +41,16 @@ export default function LandingPage() {
           <RingBinding />
           <div className="lp-cover-content">
             <img src={headerLogoClear} alt="Scrappa" className="lp-logo" />
-            <p className="lp-catchcopy">切り取って、集めて、私になる。</p>
+            <p className="lp-catchcopy">切り取って、集めて、私をつくる。</p>
             <p className="lp-desc">
               日常の一部を切り取り、それらを一冊の
               <br />
               ノートに収集していくデジタルスクラップブック
             </p>
-            <button className="lp-google-btn" onClick={handleGoogleLogin}>
+            {/* ──<button className="lp-google-btn" onClick={handleGoogleLogin}>
               <GoogleIcon />
               Google ログイン
-            </button>
+            </button> ── */}
           </div>
         </div>
       </section>
@@ -67,7 +67,7 @@ export default function LandingPage() {
           <br />
           スマホで撮った日常の写真を切り取り、
           <br />
-          一冊のノートに収集していく。
+          一冊のノートに集めていく。
         </p>
         <div className="lp-concept-grid">
           <div className="lp-concept-card">
@@ -124,7 +124,8 @@ export default function LandingPage() {
             <div className="lp-feature-num">04</div>
             <h3 className="lp-feature-title">フレンドとゆるく共有</h3>
             <p className="lp-feature-body">
-              フレンドのブックをのぞいたり、いいねを送ったり。
+              フレンドのブックをのぞいて、いいねを送る。
+              <br />
               発信ではなく「見せ合う」ゆるいつながり。
             </p>
           </div>
@@ -140,7 +141,9 @@ export default function LandingPage() {
             <div className="lp-step-body">
               <h3>気になるものを撮る</h3>
               <p>
-                日常生活の中で目に入ったお菓子のパッケージ、カフェのインテリア、気になるロゴ。なんでもOK。
+                日常生活の中で目に入ったお菓子のパッケージ、
+                <br />
+                カフェのインテリア、気になるロゴ。なんでもOK。
               </p>
             </div>
           </div>
@@ -158,7 +161,7 @@ export default function LandingPage() {
             <div className="lp-step-body">
               <h3>スクラップブックに保存</h3>
               <p>
-                自分だけのスクラップブックに収集したクリップが蓄積されていく。整理は不要。
+                自分のスクラップブックに収集したクリップが蓄積されていく。整理は不要。
               </p>
             </div>
           </div>
