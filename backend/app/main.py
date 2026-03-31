@@ -15,7 +15,9 @@ app.add_middleware(
         "http://localhost:3000",              # ローカル開発
         "http://frontend:3000",              # Docker内部
         "https://scrappafrontend.vercel.app", # 旧URL
-        "https://scrappaapp.vercel.app",      # 本番
+        "https://scrappaapp.vercel.app",      # 旧Vercel URL
+        "https://scrappa.digital",            # 本番
+        "https://www.scrappa.digital",        # 本番 www
     ],
     allow_credentials=True,
     allow_methods=["*"],
