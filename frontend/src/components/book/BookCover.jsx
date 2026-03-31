@@ -101,7 +101,7 @@ export default function BookCover({ userName, onOpen, coverTitle, coverFont, onT
               <button
                 key={tab.label}
                 className={`font-tab ${activeTab === i ? 'active' : ''}`}
-                onClick={() => setActiveTab(i)}
+                onMouseDown={e => { e.preventDefault(); setActiveTab(i) }}
               >
                 {tab.label}
               </button>
@@ -113,7 +113,7 @@ export default function BookCover({ userName, onOpen, coverTitle, coverFont, onT
                 key={label}
                 className={`font-option ${(coverFont || '') === value ? 'selected' : ''}`}
                 style={{ fontFamily: value || 'inherit' }}
-                onClick={() => onFontChange(value)}
+                onMouseDown={e => { e.preventDefault(); onFontChange(value) }}
               >
                 {label}
               </button>
