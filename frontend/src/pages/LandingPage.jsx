@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import headerLogoClear from '../assets/headerLogo_clear.png'
 import { RingBinding } from '../components/book/Book'
@@ -185,7 +185,12 @@ export default function LandingPage() {
       </section>
 
       <footer className="lp-footer">
-        <p>© 2026 Scrappa</p>
+        <nav className="lp-footer-links">
+          <Link to="/terms">利用規約</Link>
+          <Link to="/privacy">プライバシーポリシー</Link>
+          <Link to="/contact">お問い合わせ</Link>
+        </nav>
+        <p className="lp-footer-copy">© 2026 Scrappa</p>
       </footer>
     </div>
   );

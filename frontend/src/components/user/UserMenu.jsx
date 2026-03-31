@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import UserProfileModal from './UserProfileModal'
 import './UserMenu.css'
 
 export default function UserMenu({ user, onLogout, onUserUpdated }) {
   const [open, setOpen] = useState(false)
   const [showProfile, setShowProfile] = useState(false)
+  const navigate = useNavigate()
 
   const displayName = user.user_metadata?.display_name
     || user.user_metadata?.full_name
@@ -35,6 +37,26 @@ export default function UserMenu({ user, onLogout, onUserUpdated }) {
             >
               プロフィールを編集
             </button>
+            <hr className="user-menu-divider" />
+            <button
+              className="user-menu-item"
+              onClick={() => { navigate('/terms'); setOpen(false) }}
+            >
+              利用規約
+            </button>
+            <button
+              className="user-menu-item"
+              onClick={() => { navigate('/privacy'); setOpen(false) }}
+            >
+              プライバシーポリシー
+            </button>
+            <button
+              className="user-menu-item"
+              onClick={() => { navigate('/contact'); setOpen(false) }}
+            >
+              お問い合わせ
+            </button>
+            <hr className="user-menu-divider" />
             <button className="user-menu-item user-menu-item--logout" onClick={onLogout}>
               ログアウト
             </button>

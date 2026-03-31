@@ -329,11 +329,29 @@
   background: #2c5f2e;
   color: rgba(255, 255, 255, 0.7);
   text-align: center;
-  padding: 16px;
+  padding: 24px 16px;
   font-size: 0.8rem;
 }
 
-.lp-footer p {
+.lp-footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 12px;
+}
+
+.lp-footer-links a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.lp-footer-links a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.lp-footer-copy {
   margin: 0;
 }
 
