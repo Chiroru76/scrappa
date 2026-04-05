@@ -13,21 +13,30 @@
   color: #6b5344;
 }
 
-.guest-banner-btn {
-  padding: 6px 16px;
-  background: #4a3728;
-  color: #fff;
+.guest-banner-login-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: #ffffff;
+  color: #333;
   border: none;
-  border-radius: 6px;
-  font-size: 0.82rem;
-  font-weight: 600;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.15s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.2s, transform 0.1s;
 }
 
-.guest-banner-btn:hover {
-  background: #3a2a1e;
+.guest-banner-login-btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.guest-banner-login-btn:active {
+  transform: translateY(0);
 }
 
 @media (max-width: 767px) {
@@ -38,7 +47,8 @@
     text-align: center;
   }
 
-  .guest-banner-btn {
+  .guest-banner-login-btn {
     width: 100%;
+    justify-content: center;
   }
 }
