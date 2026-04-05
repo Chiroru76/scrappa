@@ -5,10 +5,35 @@ export function isGuestMode() {
   return localStorage.getItem(GUEST_MODE_KEY) === 'true'
 }
 
+const DEFAULT_CLIPS = [
+  {
+    id: 'default-1',
+    image_url: 'https://scrappa-images.s3.ap-northeast-1.amazonaws.com/clips/b0136db0-5947-4969-8004-15ea7aea18b6.jpg',
+    tags: [],
+    memo: null,
+    is_public: true,
+    page: 1,
+    position: 0,
+    created_at: '2026-01-01T00:00:00.000Z',
+    likes_count: 0,
+  },
+  {
+    id: 'default-2',
+    image_url: 'https://scrappa-images.s3.ap-northeast-1.amazonaws.com/clips/7037ba62-9b50-4d67-b90a-15d284131681.jpg',
+    tags: [],
+    memo: null,
+    is_public: true,
+    page: 1,
+    position: 1,
+    created_at: '2026-01-01T00:00:01.000Z',
+    likes_count: 0,
+  },
+]
+
 export function enterGuestMode() {
   localStorage.setItem(GUEST_MODE_KEY, 'true')
   if (!localStorage.getItem(GUEST_CLIPS_KEY)) {
-    localStorage.setItem(GUEST_CLIPS_KEY, JSON.stringify([]))
+    localStorage.setItem(GUEST_CLIPS_KEY, JSON.stringify(DEFAULT_CLIPS))
   }
 }
 

@@ -1,3 +1,19 @@
+.guest-exit-btn {
+  padding: 6px 14px;
+  background: transparent;
+  border: 1px solid rgba(74, 55, 40, 0.4);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #6b5344;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.guest-exit-btn:hover {
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
 .home {
   min-height: 100vh;
   background-color: #f5f0e8;
@@ -91,3 +107,4 @@
   .home-main {
     padding: 1px 0;
 }
+

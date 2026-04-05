@@ -158,18 +158,7 @@ export default function Home() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           {isGuest ? (
-            <button
-              onClick={handleExitGuest}
-              style={{
-                padding: '6px 14px',
-                background: 'transparent',
-                border: '1px solid rgba(74,55,40,0.4)',
-                borderRadius: '6px',
-                fontSize: '0.82rem',
-                color: '#6b5344',
-                cursor: 'pointer',
-              }}
-            >
+            <button className="guest-exit-btn" onClick={handleExitGuest}>
               終了する
             </button>
           ) : (

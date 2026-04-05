@@ -23,7 +23,7 @@ export default function GuestBanner() {
   return (
     <div className="guest-banner">
       <span className="guest-banner-text">
-        お試し中です。データはこのブラウザにのみ保存されます。
+        お試し中です。全ての機能を利用するにはログインしてください。
       </span>
       <button className="guest-banner-login-btn" onClick={handleLogin}>
         <GoogleIcon />
