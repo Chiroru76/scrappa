@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import api from '../lib/api'
+import * as guestStorage from '../lib/guestStorage'
 
-export function useTags() {
+export function useTags(isGuest = false) {
   const [tags, setTags] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -13,8 +14,12 @@ export function useTags() {
     async function fetchTags() {
       try {
         setLoading(true)
-        const response = await api.get('/tags/')
-        setTags(response.data.tags)
+        if (isGuest) {
+          setTags(guestStorage.getTags())
+        } else {
+          const response = await api.get('/tags/')
+          setTags(response.data.tags)
+        }
       } catch (err) {
         setError(err)
       } finally {
@@ -22,7 +27,7 @@ export function useTags() {
       }
     }
     fetchTags()
-  }, [revision])
+  }, [revision, isGuest])
 
   return { tags, loading, error, refetch }
 }

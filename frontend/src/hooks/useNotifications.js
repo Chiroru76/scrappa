@@ -2,11 +2,12 @@ import { useState, useEffect, useCallback } from 'react'
 import api from '../lib/api'
 import { supabase } from '../lib/supabase'
 
-export function useNotifications() {
+export function useNotifications(isGuest = false) {
   const [notifications, setNotifications] = useState([])
   const [unreadCount, setUnreadCount] = useState(0)
 
   const fetchNotifications = useCallback(async () => {
+    if (isGuest) return
     try {
       const res = await api.get('/notifications')
       setNotifications(res.data.notifications)
@@ -14,9 +15,10 @@ export function useNotifications() {
     } catch {
       // 認証前など取得失敗時は無視
     }
-  }, [])
+  }, [isGuest])
 
   useEffect(() => {
+    if (isGuest) return
     fetchNotifications()
 
     // Supabase Realtime: 新しい通知が届いたら再取得
@@ -32,7 +34,7 @@ export function useNotifications() {
       .subscribe()
 
     return () => supabase.removeChannel(channel)
-  }, [fetchNotifications])
+  }, [fetchNotifications, isGuest])
 
   const markAllRead = useCallback(async () => {
     await api.patch('/notifications/read')

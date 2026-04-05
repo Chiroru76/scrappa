@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTags } from '../../hooks/useTags'
 import api from '../../lib/api'
+import * as guestStorage from '../../lib/guestStorage'
 import './ClipDetailModal.css'
 
-export default function ClipDetailModal({ clip, onClose, onUpdated, onDeleted }) {
+export default function ClipDetailModal({ clip, isGuest = false, onClose, onUpdated, onDeleted }) {
   const [selectedTags, setSelectedTags] = useState(clip.tags ?? [])
   const [tagInput, setTagInput] = useState('')
   const [memo, setMemo] = useState(clip.memo ?? '')
@@ -13,7 +14,7 @@ export default function ClipDetailModal({ clip, onClose, onUpdated, onDeleted })
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState(null)
 
-  const { tags: existingTags } = useTags()
+  const { tags: existingTags } = useTags(isGuest)
 
   // Escapeキーで閉じる
   useEffect(() => {
@@ -43,7 +44,11 @@ export default function ClipDetailModal({ clip, onClose, onUpdated, onDeleted })
     setSaving(true)
     setError(null)
     try {
-      await api.patch(`/clips/${clip.id}/`, { tags: selectedTags, memo: memo || null, is_public: isPublic })
+      if (isGuest) {
+        guestStorage.updateClip(clip.id, { tags: selectedTags, memo: memo || null, is_public: isPublic })
+      } else {
+        await api.patch(`/clips/${clip.id}/`, { tags: selectedTags, memo: memo || null, is_public: isPublic })
+      }
       onUpdated()
       onClose()
     } catch (err) {
@@ -58,7 +63,11 @@ export default function ClipDetailModal({ clip, onClose, onUpdated, onDeleted })
     if (!window.confirm('このクリップを削除しますか？')) return
     setDeleting(true)
     try {
-      await api.delete(`/clips/${clip.id}/`)
+      if (isGuest) {
+        guestStorage.deleteClip(clip.id)
+      } else {
+        await api.delete(`/clips/${clip.id}/`)
+      }
       onDeleted()
     } catch (err) {
       setError('削除に失敗しました。再度お試しください。')

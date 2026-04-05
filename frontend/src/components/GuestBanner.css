@@ -1,0 +1,54 @@
+.guest-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 10px 16px;
+  background-color: #fdf6e3;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 0.85rem;
+}
+
+.guest-banner-text {
+  color: #6b5344;
+}
+
+.guest-banner-login-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: #ffffff;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.2s, transform 0.1s;
+}
+
+.guest-banner-login-btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.guest-banner-login-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 767px) {
+  .guest-banner {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+
+  .guest-banner-login-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
