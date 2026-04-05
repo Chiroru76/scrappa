@@ -1,0 +1,44 @@
+.guest-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 10px 16px;
+  background-color: #fdf6e3;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  font-size: 0.85rem;
+}
+
+.guest-banner-text {
+  color: #6b5344;
+}
+
+.guest-banner-btn {
+  padding: 6px 16px;
+  background: #4a3728;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+}
+
+.guest-banner-btn:hover {
+  background: #3a2a1e;
+}
+
+@media (max-width: 767px) {
+  .guest-banner {
+    flex-direction: column;
+    gap: 8px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+
+  .guest-banner-btn {
+    width: 100%;
+  }
+}

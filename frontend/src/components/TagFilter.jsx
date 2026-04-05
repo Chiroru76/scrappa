@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import api from '../lib/api'
+import * as guestStorage from '../lib/guestStorage'
 import './TagFilter.css'
 
-export default function TagFilter({ tags, selectedTag, onSelect, onTagRenamed, onTagDeleted }) {
+export default function TagFilter({ tags, selectedTag, onSelect, onTagRenamed, onTagDeleted, isGuest = false }) {
   const [editingId, setEditingId] = useState(null)
   const [editingName, setEditingName] = useState('')
 
@@ -19,17 +20,25 @@ export default function TagFilter({ tags, selectedTag, onSelect, onTagRenamed, o
     setEditingId(null)
     if (!newName || newName === tag.name) return
     try {
-      await api.patch(`/tags/${tag.id}`, { name: newName })
+      if (isGuest) {
+        guestStorage.renameTag(tag.name, newName)
+      } else {
+        await api.patch(`/tags/${tag.id}`, { name: newName })
+      }
       onTagRenamed(tag.name, newName)
     } catch {
-      // エラー時は変更なし（refetch しないのでUIは元に戻る）
+      // エラー時は変更なし
     }
   }
 
   const handleDelete = async (tag) => {
     if (!window.confirm(`タグ「${tag.name}」を削除しますか？\n（クリップからも削除されます）`)) return
     try {
-      await api.delete(`/tags/${tag.id}`)
+      if (isGuest) {
+        guestStorage.deleteTag(tag.name)
+      } else {
+        await api.delete(`/tags/${tag.id}`)
+      }
       onTagDeleted(tag.name)
     } catch {
       // エラー時は何もしない

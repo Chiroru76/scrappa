@@ -3,11 +3,12 @@ import { createPortal } from 'react-dom'
 import Cropper from 'react-easy-crop'
 import { useTags } from '../../hooks/useTags'
 import api from '../../lib/api'
+import * as guestStorage from '../../lib/guestStorage'
 import { getCroppedBlob } from '../../lib/cropImage'
 import snapSound from '../../assets/Staple.mp3'
 import './UploadModal.css'
 
-export default function UploadModal({ onClose, onUploaded }) {
+export default function UploadModal({ isGuest = false, onClose, onUploaded }) {
   // フェーズ管理: 'select' → 'crop' → 'preview'
   const [phase, setPhase] = useState('select')
   const [imageSrc, setImageSrc] = useState(null)  // 元画像のblob URL（クロップUI用）
@@ -29,7 +30,7 @@ export default function UploadModal({ onClose, onUploaded }) {
   const [error, setError] = useState(null)
   const inputRef = useRef(null)
 
-  const { tags: existingTags } = useTags()
+  const { tags: existingTags } = useTags(isGuest)
 
   // Escapeキーで閉じる
   useEffect(() => {
@@ -114,12 +115,22 @@ export default function UploadModal({ onClose, onUploaded }) {
     setUploading(true)
     setError(null)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('tags', JSON.stringify(selectedTags))
-      formData.append('memo', memo)
-      formData.append('is_public', isPublic ? 'true' : 'false')
-      await api.post('/clips/', formData)
+      if (isGuest) {
+        const dataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader()
+          reader.onload = () => resolve(reader.result)
+          reader.onerror = reject
+          reader.readAsDataURL(file)
+        })
+        guestStorage.addClip({ imageDataUrl: dataUrl, tags: selectedTags, memo: memo || null, isPublic })
+      } else {
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('tags', JSON.stringify(selectedTags))
+        formData.append('memo', memo)
+        formData.append('is_public', isPublic ? 'true' : 'false')
+        await api.post('/clips/', formData)
+      }
       onUploaded()
       onClose()
     } catch (err) {

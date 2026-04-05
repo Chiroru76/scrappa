@@ -104,6 +104,26 @@
   transform: translateY(0);
 }
 
+/* ─── 試してみるボタン ─── */
+.lp-try-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: transparent;
+  color: #6b5344;
+  border: 1.5px solid rgba(74, 55, 40, 0.4);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  width: fit-content;
+}
+
+.lp-try-btn:hover {
+  border-color: #4a3728;
+  color: #4a3728;
+}
+
 /* ─── セクション共通 ─── */
 .lp-section {
   padding: 72px 48px;

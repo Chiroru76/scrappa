@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { enterGuestMode } from '../lib/guestStorage'
 import headerLogoClear from '../assets/headerLogo_clear.png'
 import { RingBinding } from '../components/book/Book'
 import '../components/book/Book.css'
@@ -33,6 +34,11 @@ export default function LandingPage() {
     })
   }
 
+  const handleTryGuest = () => {
+    enterGuestMode()
+    navigate('/home')
+  }
+
   return (
     <div className="lp">
       {/* ── Hero ── */}
@@ -50,6 +56,9 @@ export default function LandingPage() {
             <button className="lp-google-btn" onClick={handleGoogleLogin}>
               <GoogleIcon />
               Google ログイン
+            </button>
+            <button className="lp-try-btn" onClick={handleTryGuest}>
+              ログインせずに試してみる
             </button>
           </div>
         </div>
@@ -184,6 +193,9 @@ export default function LandingPage() {
         <button className="lp-google-btn" onClick={handleGoogleLogin}>
           <GoogleIcon />
           Google ログイン
+        </button>
+        <button className="lp-try-btn" onClick={handleTryGuest}>
+          ログインせずに試してみる
         </button>
       </section>
 
