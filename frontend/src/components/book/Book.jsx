@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import Page from './Page'
@@ -54,15 +54,21 @@ function SpreadNavigation({ current, total, onPrev, onNext, onShowCover }) {
 export default function Book({ clips, onClipClick, onEmptyClick, getLikeData, onShowCover, onClipsReorder }) {
   const [currentSpread, setCurrentSpread] = useState(0)
   const isMobile = useIsMobile()
+  const isDragging = useRef(false)
 
   const sortable = !!onClipsReorder
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } })
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } })
   )
 
+  function handleDragStart() {
+    isDragging.current = true
+  }
+
   function handleDragEnd(event) {
+    isDragging.current = false
     const { active, over } = event
     if (!over || active.id === over.id) return
 
@@ -106,12 +112,12 @@ export default function Book({ clips, onClipClick, onEmptyClick, getLikeData, on
   const mobileRingOnRight = isMobile && currentSpread % 2 === 0
 
   const swipeHandlers = useSwipe({
-    onSwipeLeft:  () => setCurrentSpread(s => Math.min(s + 1, totalSpreads - 1)),
-    onSwipeRight: () => setCurrentSpread(s => Math.max(s - 1, 0)),
+    onSwipeLeft:  () => { if (!isDragging.current) setCurrentSpread(s => Math.min(s + 1, totalSpreads - 1)) },
+    onSwipeRight: () => { if (!isDragging.current) setCurrentSpread(s => Math.max(s - 1, 0)) },
   })
 
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="book-container">
         <div
           className={`notebook-spread${isMobile ? ` notebook-spread--mobile notebook-spread--mobile-${mobileRingOnRight ? 'right' : 'left'}` : ''}`}

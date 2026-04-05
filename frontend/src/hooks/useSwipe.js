@@ -17,8 +17,9 @@ export function useSwipe({ onSwipeLeft, onSwipeRight, threshold = 50 }) {
     startX.current = null
     startY.current = null
 
-    // 縦方向の移動が大きい場合はスクロールとみなしてスワイプ無視
-    if (Math.abs(deltaX) < Math.abs(deltaY)) return
+    // 縦方向の移動が横方向の2倍以上あればスクロールとみなしてスワイプ無視
+    // （比率を厳しくすることでドラッグ後の誤スワイプを防ぐ）
+    if (Math.abs(deltaY) > Math.abs(deltaX) * 0.5) return
 
     if (deltaX < -threshold) onSwipeLeft?.()
     else if (deltaX > threshold) onSwipeRight?.()
