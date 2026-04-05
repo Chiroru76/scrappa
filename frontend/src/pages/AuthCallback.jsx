@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
+import { exitGuestMode } from '../lib/guestStorage'
 import LoadingScreen from '../components/LoadingScreen'
 
 export default function AuthCallback() {
@@ -9,6 +10,7 @@ export default function AuthCallback() {
   useEffect(() => {
     supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' && session) {
+        exitGuestMode()
         navigate('/home')
       }
     })
