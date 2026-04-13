@@ -37,6 +37,17 @@ export default function FriendClipDetailModal({ clip, onClose, onToggleLike }) {
               <span className="detail-like-heart">♥</span> {likeCount}
             </button>
           </div>
+          {clip.created_at && (
+            <span className="detail-created-at">
+              {(() => {
+                const d = new Date(clip.created_at)
+                const y = d.getFullYear()
+                const m = String(d.getMonth() + 1).padStart(2, '0')
+                const day = String(d.getDate()).padStart(2, '0')
+                return `${y}.${m}.${day}`
+              })()}
+            </span>
+          )}
           {clip.memo && (
             <p className="clip-memo-readonly">{clip.memo}</p>
           )}
