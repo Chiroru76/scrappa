@@ -84,7 +84,20 @@ export default function ClipDetailModal({ clip, isGuest = false, onClose, onUpda
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
         <div className="modal-body">
-          <img src={clip.image_url} alt="クリップ" className="detail-image" />
+          <div className="detail-image-container">
+            <img src={clip.image_url} alt="クリップ" className="detail-image" />
+            {clip.created_at && (
+              <span className="detail-created-at">
+                {(() => {
+                  const d = new Date(clip.created_at)
+                  const y = d.getFullYear()
+                  const m = String(d.getMonth() + 1).padStart(2, '0')
+                  const day = String(d.getDate()).padStart(2, '0')
+                  return `${y}.${m}.${day}`
+                })()}
+              </span>
+            )}
+          </div>
           {clip.likes_count > 0 && (
             <p className="clip-likes-count">❤️ {clip.likes_count}</p>
           )}
