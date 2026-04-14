@@ -96,5 +96,23 @@ export async function generateShareImage(clip) {
     })
   }
 
-  return new Promise((resolve) => canvas.toBlob(resolve, 'image/png'))
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(blob)
+      } else {
+        // モバイル Safari など toBlob が null を返す場合は toDataURL でフォールバック
+        try {
+          const dataUrl = canvas.toDataURL('image/png')
+          const byteString = atob(dataUrl.split(',')[1])
+          const ab = new ArrayBuffer(byteString.length)
+          const ia = new Uint8Array(ab)
+          for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i)
+          resolve(new Blob([ab], { type: 'image/png' }))
+        } catch (e) {
+          reject(new Error('画像の生成に失敗しました'))
+        }
+      }
+    }, 'image/png')
+  })
 }

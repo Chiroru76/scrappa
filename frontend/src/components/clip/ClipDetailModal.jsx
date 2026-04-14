@@ -64,12 +64,14 @@ export default function ClipDetailModal({ clip, isGuest = false, onClose, onUpda
 
   const handleShare = async () => {
     setSharing(true)
+    setError(null)
     try {
       const blob = await generateShareImage(clip)
       const url = URL.createObjectURL(blob)
       setPreviewUrl(url)
     } catch (err) {
       console.error(err)
+      setError('画像の生成に失敗しました。再度お試しください。')
     } finally {
       setSharing(false)
     }
