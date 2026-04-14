@@ -1,14 +1,29 @@
 async function createImage(url) {
-  // S3 画像は CORS のためバックエンドプロキシ経由で取得する
+  // S3 画像は Canvas の汚染（tainted）を防ぐため、
+  // fetch() でバイナリ取得 → Blob URL に変換してから <img> に読み込む
+  // （<img src> に直接プロキシURLを渡すだけでは Canvas が汚染され toBlob/toDataURL が失敗する）
   const isS3 = url.includes('s3.amazonaws.com') || url.includes('s3.ap-northeast')
   let src = url
+  let blobUrl = null
+
   if (isS3) {
-    src = `/api/image-proxy/?url=${encodeURIComponent(url)}`
+    const resp = await fetch(`/api/image-proxy/?url=${encodeURIComponent(url)}`)
+    if (!resp.ok) throw new Error('画像の取得に失敗しました')
+    const blob = await resp.blob()
+    blobUrl = URL.createObjectURL(blob)
+    src = blobUrl
   }
+
   return new Promise((resolve, reject) => {
     const image = new Image()
-    image.addEventListener('load', () => resolve(image))
-    image.addEventListener('error', reject)
+    image.addEventListener('load', () => {
+      if (blobUrl) URL.revokeObjectURL(blobUrl)
+      resolve(image)
+    })
+    image.addEventListener('error', (e) => {
+      if (blobUrl) URL.revokeObjectURL(blobUrl)
+      reject(e)
+    })
     image.src = src
   })
 }
