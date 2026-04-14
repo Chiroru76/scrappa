@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { useTags } from '../../hooks/useTags'
 import api from '../../lib/api'
 import * as guestStorage from '../../lib/guestStorage'
+import { generateShareImage } from '../../lib/generateShareImage'
 import './ClipDetailModal.css'
 
 export default function ClipDetailModal({ clip, isGuest = false, onClose, onUpdated, onDeleted }) {
@@ -12,6 +13,8 @@ export default function ClipDetailModal({ clip, isGuest = false, onClose, onUpda
   const [isPublic, setIsPublic] = useState(clip.is_public ?? true)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [sharing, setSharing] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState(null)
   const [error, setError] = useState(null)
 
   const { tags: existingTags } = useTags(isGuest)
@@ -59,6 +62,31 @@ export default function ClipDetailModal({ clip, isGuest = false, onClose, onUpda
     }
   }
 
+  const handleShare = async () => {
+    setSharing(true)
+    try {
+      const blob = await generateShareImage(clip)
+      const url = URL.createObjectURL(blob)
+      setPreviewUrl(url)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setSharing(false)
+    }
+  }
+
+  const handlePreviewClose = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setPreviewUrl(null)
+  }
+
+  const handleDownload = () => {
+    const a = document.createElement('a')
+    a.href = previewUrl
+    a.download = `scrappa-${clip.id}.png`
+    a.click()
+  }
+
   const handleDelete = async () => {
     if (!window.confirm('このクリップを削除しますか？')) return
     setDeleting(true)
@@ -74,6 +102,27 @@ export default function ClipDetailModal({ clip, isGuest = false, onClose, onUpda
       console.error(err)
       setDeleting(false)
     }
+  }
+
+  if (previewUrl) {
+    return createPortal(
+      <div className="modal-overlay" onClick={handlePreviewClose}>
+        <div className="share-preview-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-header">
+            <h2 className="modal-title">プレビュー</h2>
+            <button className="modal-close" onClick={handlePreviewClose}>×</button>
+          </div>
+          <div className="share-preview-body">
+            <img src={previewUrl} alt="共有画像プレビュー" className="share-preview-image" />
+          </div>
+          <div className="modal-footer">
+            <button className="cancel-btn" onClick={handlePreviewClose}>戻る</button>
+            <button className="submit-btn" onClick={handleDownload}>保存</button>
+          </div>
+        </div>
+      </div>,
+      document.body
+    )
   }
 
   return createPortal(
@@ -154,9 +203,14 @@ export default function ClipDetailModal({ clip, isGuest = false, onClose, onUpda
           </div>
         </div>
         <div className="modal-footer detail-footer">
-          <button className="delete-btn" onClick={handleDelete} disabled={deleting || saving}>
-            {deleting ? '削除中...' : '削除'}
-          </button>
+          <div className="detail-footer-left">
+            <button className="delete-btn" onClick={handleDelete} disabled={deleting || saving || sharing}>
+              {deleting ? '削除中...' : '削除'}
+            </button>
+            <button className="share-btn" onClick={handleShare} disabled={sharing || saving || deleting}>
+              {sharing ? '生成中...' : '共有'}
+            </button>
+          </div>
           <div className="detail-footer-right">
             {error && <p className="upload-error">{error}</p>}
             <button className="cancel-btn" onClick={onClose} disabled={saving || deleting}>

@@ -155,9 +155,15 @@
   border-top: 1px solid #eee;
 }
 
-/* 詳細モーダルのフッターは削除ボタン（左）と保存ボタン群（右）に分ける */
+/* 詳細モーダルのフッターは削除・共有ボタン（左）と保存ボタン群（右）に分ける */
 .detail-footer {
   justify-content: space-between;
+}
+
+.detail-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .detail-footer-right {
@@ -283,6 +289,55 @@
   white-space: pre-wrap;
   word-break: break-word;
   text-align: center;
+}
+
+/* 共有プレビューモーダル */
+.share-preview-content {
+  background-color: #fff;
+  border-radius: 12px;
+  width: 480px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.share-preview-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.share-preview-image {
+  width: 100%;
+  border-radius: 4px;
+  display: block;
+}
+
+/* 共有ボタン */
+.share-btn {
+  padding: 8px 20px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: none;
+  color: #555;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.share-btn:hover {
+  background-color: #f5f5f5;
+}
+
+.share-btn:disabled {
+  border-color: #aaa;
+  color: #aaa;
+  cursor: not-allowed;
 }
 
 /* 削除ボタン（赤系・左寄せ） */
