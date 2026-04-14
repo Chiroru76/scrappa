@@ -1,30 +1,38 @@
-async function createImage(url) {
-  // S3 画像は Canvas の汚染（tainted）を防ぐため、
-  // fetch() でバイナリ取得 → Blob URL に変換してから <img> に読み込む
-  // （<img src> に直接プロキシURLを渡すだけでは Canvas が汚染され toBlob/toDataURL が失敗する）
+/**
+ * S3 画像をバックエンドプロキシ経由で Blob として取得する
+ * MIMEタイプを image/jpeg に明示して iOS Safari の読み込み失敗を防ぐ
+ */
+async function fetchImageBlob(url) {
   const isS3 = url.includes('s3.amazonaws.com') || url.includes('s3.ap-northeast')
-  let src = url
-  let blobUrl = null
+  const fetchUrl = isS3
+    ? `/api/image-proxy/?url=${encodeURIComponent(url)}`
+    : url
 
-  if (isS3) {
-    const resp = await fetch(`/api/image-proxy/?url=${encodeURIComponent(url)}`)
-    if (!resp.ok) throw new Error('画像の取得に失敗しました')
-    const blob = await resp.blob()
-    blobUrl = URL.createObjectURL(blob)
-    src = blobUrl
+  const resp = await fetch(fetchUrl)
+  if (!resp.ok) throw new Error(`fetch failed: ${resp.status}`)
+
+  const raw = await resp.blob()
+  // S3 が application/octet-stream を返す場合に備えて MIME を強制指定
+  const mimeType = raw.type.startsWith('image/') ? raw.type : 'image/jpeg'
+  return mimeType === raw.type ? raw : new Blob([raw], { type: mimeType })
+}
+
+/**
+ * Blob から ImageBitmap を生成する（<img> タグを経由しない）
+ * createImageBitmap は iOS Safari 15.4+ でサポート
+ * フォールバックとして <img> + blob URL も用意
+ */
+async function blobToDrawable(blob) {
+  if (typeof createImageBitmap === 'function') {
+    return await createImageBitmap(blob)
   }
-
+  // フォールバック: blob URL → <img>
+  const blobUrl = URL.createObjectURL(blob)
   return new Promise((resolve, reject) => {
-    const image = new Image()
-    image.addEventListener('load', () => {
-      if (blobUrl) URL.revokeObjectURL(blobUrl)
-      resolve(image)
-    })
-    image.addEventListener('error', (e) => {
-      if (blobUrl) URL.revokeObjectURL(blobUrl)
-      reject(e)
-    })
-    image.src = src
+    const img = new Image()
+    img.onload = () => { URL.revokeObjectURL(blobUrl); resolve(img) }
+    img.onerror = () => { URL.revokeObjectURL(blobUrl); reject(new Error('image load failed')) }
+    img.src = blobUrl
   })
 }
 
@@ -37,12 +45,10 @@ function formatDate(createdAt) {
   return `${y}.${m}.${day}`
 }
 
-// テキストを maxWidth に収まるよう折り返して行配列を返す
 function wrapText(ctx, text, maxWidth) {
-  const words = text.split('')
   const lines = []
   let current = ''
-  for (const ch of words) {
+  for (const ch of text.split('')) {
     const candidate = current + ch
     if (ctx.measureText(candidate).width > maxWidth && current.length > 0) {
       lines.push(current)
@@ -61,72 +67,77 @@ function wrapText(ctx, text, maxWidth) {
  * @returns {Promise<Blob>}
  */
 export async function generateShareImage(clip) {
-  const SIZE = 1200
-  const SIDE_PAD = 72       // 左右余白
-  const TOP_PAD = 72        // 上余白
-  const BOTTOM_PAD = 220    // 下余白（チェキ感）
+  // 750px: iOS Safari のメモリ制限に収まりつつ SNS 投稿に十分な解像度
+  const SIZE = 750
+  const SIDE_PAD = 45
+  const TOP_PAD = 45
+  const BOTTOM_PAD = 138
   const IMG_AREA_W = SIZE - SIDE_PAD * 2
   const IMG_AREA_H = SIZE - TOP_PAD - BOTTOM_PAD
 
-  const img = await createImage(clip.image_url)
+  // <img> タグを経由せず Blob → ImageBitmap で Canvas に描画
+  const blob = await fetchImageBlob(clip.image_url)
+  const drawable = await blobToDrawable(blob)
+
   const canvas = document.createElement('canvas')
   canvas.width = SIZE
   canvas.height = SIZE
   const ctx = canvas.getContext('2d')
+  if (!ctx) throw new Error('canvas context unavailable')
 
   // 白背景
   ctx.fillStyle = '#ffffff'
   ctx.fillRect(0, 0, SIZE, SIZE)
 
   // contain: 縦横比を保ちつつ IMG_AREA に収める
-  const scale = Math.min(IMG_AREA_W / img.width, IMG_AREA_H / img.height)
-  const drawW = img.width * scale
-  const drawH = img.height * scale
+  const srcW = drawable.width ?? drawable.naturalWidth
+  const srcH = drawable.height ?? drawable.naturalHeight
+  const scale = Math.min(IMG_AREA_W / srcW, IMG_AREA_H / srcH)
+  const drawW = srcW * scale
+  const drawH = srcH * scale
   const drawX = SIDE_PAD + (IMG_AREA_W - drawW) / 2
   const drawY = TOP_PAD + (IMG_AREA_H - drawH) / 2
-  ctx.drawImage(img, drawX, drawY, drawW, drawH)
+  ctx.drawImage(drawable, drawX, drawY, drawW, drawH)
 
-  // 日付（クリップ画像の右下に配置）
+  // ImageBitmap はメモリ解放が必要
+  if (drawable.close) drawable.close()
+
+  // 日付（クリップ画像の右下）
   const dateStr = formatDate(clip.created_at)
   if (dateStr) {
-    ctx.font = '400 24px "Helvetica Neue", Arial, sans-serif'
+    ctx.font = '400 15px "Helvetica Neue", Arial, sans-serif'
     ctx.fillStyle = '#aaaaaa'
     ctx.textAlign = 'right'
-    const dateX = drawX + drawW - 12
-    const dateY = drawY + drawH + 22
-    ctx.fillText(dateStr, dateX, dateY)
+    ctx.fillText(dateStr, drawX + drawW - 8, drawY + drawH + 14)
   }
 
   // メモ（下余白エリアに中央揃え）
-  const textBaseY = TOP_PAD + IMG_AREA_H + 110
   if (clip.memo) {
-    ctx.font = '400 44px "Helvetica Neue", Arial, sans-serif'
+    ctx.font = '400 28px "Helvetica Neue", Arial, sans-serif'
     ctx.fillStyle = '#999999'
     ctx.textAlign = 'center'
     const maxTextWidth = SIZE - SIDE_PAD * 2
     const lines = wrapText(ctx, clip.memo, maxTextWidth)
-    const lineHeight = 62
+    const lineHeight = 38
+    const memoStartY = TOP_PAD + IMG_AREA_H + 69
     lines.forEach((line, i) => {
-      ctx.fillText(line, SIZE / 2, textBaseY + i * lineHeight)
+      ctx.fillText(line, SIZE / 2, memoStartY + i * lineHeight)
     })
   }
 
   return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (blob) {
-        resolve(blob)
-      } else {
-        // モバイル Safari など toBlob が null を返す場合は toDataURL でフォールバック
-        try {
-          const dataUrl = canvas.toDataURL('image/png')
-          const byteString = atob(dataUrl.split(',')[1])
-          const ab = new ArrayBuffer(byteString.length)
-          const ia = new Uint8Array(ab)
-          for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i)
-          resolve(new Blob([ab], { type: 'image/png' }))
-        } catch (e) {
-          reject(new Error('画像の生成に失敗しました'))
-        }
+    canvas.toBlob((outputBlob) => {
+      if (outputBlob) { resolve(outputBlob); return }
+      // toBlob が null を返す場合（一部 Safari）は toDataURL でフォールバック
+      try {
+        const dataUrl = canvas.toDataURL('image/png')
+        const bin = atob(dataUrl.split(',')[1])
+        const ab = new ArrayBuffer(bin.length)
+        const ia = new Uint8Array(ab)
+        for (let i = 0; i < bin.length; i++) ia[i] = bin.charCodeAt(i)
+        resolve(new Blob([ab], { type: 'image/png' }))
+      } catch (e) {
+        reject(new Error(`toBlob fallback failed: ${e.message}`))
       }
     }, 'image/png')
   })
