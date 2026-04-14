@@ -1,15 +1,20 @@
+async function fetchAsBlob(url) {
+  // S3 画像は CORS のためバックエンドプロキシ経由で fetch し Blob URL に変換する
+  // （<img src> にプロキシURLを直接渡すと Canvas が tainted になり toBlob が失敗する）
+  const proxyUrl = `/api/image-proxy/?url=${encodeURIComponent(url)}`
+  const resp = await fetch(proxyUrl)
+  if (!resp.ok) throw new Error(`proxy fetch failed: ${resp.status}`)
+  return await resp.blob()
+}
+
 async function createImage(url) {
-  // S3 画像は Canvas の汚染（tainted）を防ぐため、
-  // fetch() でバイナリ取得 → Blob URL に変換してから <img> に読み込む
-  // （<img src> に直接プロキシURLを渡すだけでは Canvas が汚染され toBlob/toDataURL が失敗する）
   const isS3 = url.includes('s3.amazonaws.com') || url.includes('s3.ap-northeast')
+
   let src = url
   let blobUrl = null
 
   if (isS3) {
-    const resp = await fetch(`/api/image-proxy/?url=${encodeURIComponent(url)}`)
-    if (!resp.ok) throw new Error('画像の取得に失敗しました')
-    const blob = await resp.blob()
+    const blob = await fetchAsBlob(url)
     blobUrl = URL.createObjectURL(blob)
     src = blobUrl
   }
@@ -22,7 +27,7 @@ async function createImage(url) {
     })
     image.addEventListener('error', (e) => {
       if (blobUrl) URL.revokeObjectURL(blobUrl)
-      reject(e)
+      reject(new Error(`image load failed: ${src}`))
     })
     image.src = src
   })
@@ -39,10 +44,9 @@ function formatDate(createdAt) {
 
 // テキストを maxWidth に収まるよう折り返して行配列を返す
 function wrapText(ctx, text, maxWidth) {
-  const words = text.split('')
   const lines = []
   let current = ''
-  for (const ch of words) {
+  for (const ch of text.split('')) {
     const candidate = current + ch
     if (ctx.measureText(candidate).width > maxWidth && current.length > 0) {
       lines.push(current)
@@ -61,18 +65,21 @@ function wrapText(ctx, text, maxWidth) {
  * @returns {Promise<Blob>}
  */
 export async function generateShareImage(clip) {
-  const SIZE = 1200
-  const SIDE_PAD = 72       // 左右余白
-  const TOP_PAD = 72        // 上余白
-  const BOTTOM_PAD = 220    // 下余白（チェキ感）
+  // 750px: iOS Safari のメモリ制限に収まる範囲で SNS 投稿に十分な解像度
+  const SIZE = 750
+  const SIDE_PAD = 45
+  const TOP_PAD = 45
+  const BOTTOM_PAD = 138
   const IMG_AREA_W = SIZE - SIDE_PAD * 2
   const IMG_AREA_H = SIZE - TOP_PAD - BOTTOM_PAD
 
   const img = await createImage(clip.image_url)
+
   const canvas = document.createElement('canvas')
   canvas.width = SIZE
   canvas.height = SIZE
   const ctx = canvas.getContext('2d')
+  if (!ctx) throw new Error('canvas context unavailable')
 
   // 白背景
   ctx.fillStyle = '#ffffff'
@@ -86,28 +93,26 @@ export async function generateShareImage(clip) {
   const drawY = TOP_PAD + (IMG_AREA_H - drawH) / 2
   ctx.drawImage(img, drawX, drawY, drawW, drawH)
 
-  // 日付（クリップ画像の右下に配置）
+  // 日付（クリップ画像の右下）
   const dateStr = formatDate(clip.created_at)
   if (dateStr) {
-    ctx.font = '400 24px "Helvetica Neue", Arial, sans-serif'
+    ctx.font = '400 15px "Helvetica Neue", Arial, sans-serif'
     ctx.fillStyle = '#aaaaaa'
     ctx.textAlign = 'right'
-    const dateX = drawX + drawW - 12
-    const dateY = drawY + drawH + 22
-    ctx.fillText(dateStr, dateX, dateY)
+    ctx.fillText(dateStr, drawX + drawW - 8, drawY + drawH + 14)
   }
 
   // メモ（下余白エリアに中央揃え）
-  const textBaseY = TOP_PAD + IMG_AREA_H + 110
   if (clip.memo) {
-    ctx.font = '400 44px "Helvetica Neue", Arial, sans-serif'
+    ctx.font = '400 28px "Helvetica Neue", Arial, sans-serif'
     ctx.fillStyle = '#999999'
     ctx.textAlign = 'center'
     const maxTextWidth = SIZE - SIDE_PAD * 2
     const lines = wrapText(ctx, clip.memo, maxTextWidth)
-    const lineHeight = 62
+    const lineHeight = 38
+    const memoStartY = TOP_PAD + IMG_AREA_H + 69
     lines.forEach((line, i) => {
-      ctx.fillText(line, SIZE / 2, textBaseY + i * lineHeight)
+      ctx.fillText(line, SIZE / 2, memoStartY + i * lineHeight)
     })
   }
 
@@ -115,18 +120,18 @@ export async function generateShareImage(clip) {
     canvas.toBlob((blob) => {
       if (blob) {
         resolve(blob)
-      } else {
-        // モバイル Safari など toBlob が null を返す場合は toDataURL でフォールバック
-        try {
-          const dataUrl = canvas.toDataURL('image/png')
-          const byteString = atob(dataUrl.split(',')[1])
-          const ab = new ArrayBuffer(byteString.length)
-          const ia = new Uint8Array(ab)
-          for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i)
-          resolve(new Blob([ab], { type: 'image/png' }))
-        } catch (e) {
-          reject(new Error('画像の生成に失敗しました'))
-        }
+        return
+      }
+      // toBlob が null を返した場合（一部 Safari）は toDataURL でフォールバック
+      try {
+        const dataUrl = canvas.toDataURL('image/png')
+        const byteString = atob(dataUrl.split(',')[1])
+        const ab = new ArrayBuffer(byteString.length)
+        const ia = new Uint8Array(ab)
+        for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i)
+        resolve(new Blob([ab], { type: 'image/png' }))
+      } catch (e) {
+        reject(new Error(`toBlob fallback failed: ${e.message}`))
       }
     }, 'image/png')
   })
